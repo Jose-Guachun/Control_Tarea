@@ -26,10 +26,10 @@ def signup(request):
         try:
             form= UserCreationForm(request.POST)
             if form.is_valid():
-                    user = User.objects.create_user( request.POST["username"], password=request.POST["password1"])
-                    user.save()
-                    login(request, user)
-                    return redirect('signin')
+                user = User.objects.create_user( request.POST["username"], password=request.POST["password1"])
+                user.save()
+                login(request, user)
+                return redirect('login')
             else:
                 return render(request, 'signup.html', {"form": form})
         except Exception as ex:

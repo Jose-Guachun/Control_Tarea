@@ -23,7 +23,7 @@ urlpatterns = [
         view=views.LoginView.as_view(),
         name='login',
     ),
-    path('home/', views.cargarsistema, name='home'),
+    path('', views.cargarsistema, name='home'),
     path('admin/', admin.site.urls),
     path('signup/', views.signup, name='signup'),
     path('logout/', views.signout, name='logout'),
