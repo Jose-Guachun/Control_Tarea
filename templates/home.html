@@ -5,7 +5,7 @@
     <div class="row">
         {% if persona.perfil == 2 %}
             <div class="col-md-3">
-                <a href="{{request.path}}?action=cursos">
+                <a href="{% url 'home' 'cursos' %}">
                     <div class="card" style="border:1px solid #CCC">
                         <div class="card-header bg-light" style="height:40px">
                             <span class="text-dark">Cursos</span>

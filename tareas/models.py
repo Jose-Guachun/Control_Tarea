@@ -84,7 +84,7 @@ class Asignatura(ModeloBase):
 class CursoAsignatura(ModeloBase):
     curso = models.ForeignKey(Curso, verbose_name=u'Curso', on_delete=models.CASCADE)
     asignatura = models.ForeignKey(Asignatura, verbose_name=u'Asignatura', on_delete=models.CASCADE)
-    profesor = models.ForeignKey(Persona, blank=True, null=True, verbose_name=u'Profesor', on_delete=models.CASCADE)
+    profesor = models.ForeignKey(Persona, verbose_name=u'Profesor', on_delete=models.CASCADE)
     cerrada = models.BooleanField(default=False, verbose_name=u'Cerrado')
     estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en la asignatura', related_name='+')
 

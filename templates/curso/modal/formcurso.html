@@ -5,12 +5,13 @@
 <div class="card">
     <div class='card-body border-top border-3 rounded-3 border-primary'>
         <h2> <i class="fa-solid fa-layer-group"></i> Adicionar Curso</h2>
-            {% if error %}
-            <p class="alert alert-danger">{{error}}</p>
-            {% endif %}
+                {% for error in errors %}
+                    <p class="alert alert-danger">{{ error }}</p>
+                {% endfor %}
             <form method="POST" enctype="multipart/form-data" id="updateForm">
                 {% csrf_token %}
-                <input type="hidden" name="action" value="addpersona">
+{#                <input type="hidden" name="action" value="{{action}}">#}
+                <input type="hidden" name="id" value="{{ curso_a.id }}">
                 <div class="row">
                     {% for field in form %}
                     <div class="mb-2 col-12 col-md-6">
@@ -33,7 +34,7 @@
                     <ul>
                         <li>
                             <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Guardar</button>
-                            <a class="btn btn-danger" href="{% url 'home' %}?action=cursos"><i class="fa fa-close"></i> Cancelar</a>
+                            <a class="btn btn-danger" href="{% url 'home' 'cursos' %}"><i class="fa fa-close"></i> Cancelar</a>
                         </li>
                     </ul>
                 </div>
@@ -44,7 +45,7 @@
 {% block srcjs %}
 <script>
     $(function () {
-        $("select").select2({ width: "100%" })
+        $("#id_curso, #id_asignatura, #id_profesor, #id_estudiantes").select2({ width: "100%" })
     });
 </script>
 {% endblock %}

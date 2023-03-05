@@ -91,7 +91,7 @@ class PersonaForm(FormModeloBase):
             'perfil': forms.Select(attrs={'class': 'form-control'}),
             }
 
-class CursoForm(FormModeloBase):
+class CursoAsignaturaForm(FormModeloBase):
     
     class Meta:
         model=CursoAsignatura

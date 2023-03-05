@@ -86,10 +86,10 @@
         <div class="header">
 
             <div class="header-left text-center">
-                <a href="{% url 'home' %}" class="logo ">
+                <a href="{% url 'home' 'home'%}" class="logo ">
                     <img src="{% static 'image/school.png' %}" alt="Logo">
                 </a>
-                <a href="{% url 'home' %}" class="logo logo-small">
+                <a href="{% url 'home' 'home'%}" class="logo logo-small">
                     <img src="{% static 'image/nuevas/logo-small.png' %}" alt="Logo" width="30" height="30">
                 </a>
             </div>
@@ -174,7 +174,6 @@
         <script src="{% static 'js/nuevas/chart-data.js' %}"></script>
         <script src="{% static 'js/nuevas/script.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/select2.js' %}"></script>
-
         <script src="/static/bootstrap5/libs/bootstrap/libs/bootstrap.bundle.min.js?12.2"></script>
         <script src="/static/bootstrap5/libs/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
         <script src="/static/bootstrap5/libs/inputmask/dist/jquery.inputmask.min.js"></script>
@@ -182,6 +181,56 @@
         <script src="/static/bootstrap5/js/theme.min.js?4.11"></script>
 
         <script>
+            function eliminarajax(pk, nombre, accion, url = '{{ request.path }}', titulo = 'Estás por eliminar este registro:') {
+                Swal.fire({
+                    html: `<b>${titulo}</b> ${nombre}`,
+                    text: "Esta acción es irreversible",
+                    icon: 'info',
+                    showCancelButton: true,
+                    allowOutsideClick: false,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, deseo hacerlo',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ reques.path }}',
+                            async: false,
+                            data: {
+                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                                action: accion,
+                                id: pk,
+                            },
+                            dataType: "json",
+                            beforeSend: function () {
+                            }
+                        }).done(function (data) {
+                            if (data.error === false) {
+                                location.reload();
+                            }
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                           mensajeDanger('Error en el servidor')
+                        }).always(function () {
+                        });
+                    } else {
+                    }
+                })
+            }
+
+            $(function () {
+                {% if messages %}
+                     Swal.fire(
+                         {% for message in messages %}
+                             '{{ message }}'
+                         {% endfor %},
+                         '{{ nombreempresa }}',
+                         'error'
+                     )
+
+                {% endif %}
+            })
             function mensajeSuccess(mensaje) {
                 Swal.fire(mensaje, '{{ nombreempresa }}', 'success')
             }
