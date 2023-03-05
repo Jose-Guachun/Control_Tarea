@@ -43,7 +43,9 @@ class Persona(ModeloBase):
     def __str__(self):
         #return username
         return (f'{self.nombres} {self.apellido1} {self.apellido2}')
-
+    def nombre_simple(self):
+        nombres=self.nombres.split(' ')
+        return (f'{nombres[0]} {self.apellido1}')
 class Curso(ModeloBase):
     nombre = models.CharField(default='',verbose_name=u'Nombre de la curso', max_length=250)
     paralelo = models.CharField(default='',verbose_name=u'Paralelo', max_length=250)

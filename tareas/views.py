@@ -42,9 +42,9 @@ def signout(request):
 
 class LoginView(FormView):
     # login view
-    template_name='signin.html'
-    form_class= LoginForm
-    success_url=reverse_lazy('home')
+    template_name ='signin.html'
+    form_class = LoginForm
+    success_url = reverse_lazy('home')
 
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
