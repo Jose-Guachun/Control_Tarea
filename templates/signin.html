@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="{% static 'css/nuevas/feather.css' %}">
   <link rel="stylesheet" href="{% static 'css/nuevas/flags.css' %}">
   <link rel="stylesheet" href="{% static 'css/fontawesome/css/all.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/nuevas/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/nuevas/style1.css' %}">
 </head>
 
@@ -35,27 +34,25 @@
               {% if form.errors %}
                 <p class="alert alert-danger">El nombre de usuario o contraseña estan incorrectos.</p>
               {% endif %}
-              <form action="/" method="POST">
+              <form method="POST">
                 {% csrf_token %}
                 {% for field in form %}
                 <div class="mb-2">
                   <label for="" class="ms-1 mb-1">{{ field.label }} <i class="text-danger fw-bold fs-6">*</i>:</label>
-                  <input 
-                  type="{% if field.name == 'password' %}password{%else%}text{%endif%}" 
-                  class="form-control" placeholder="Escribe tu {{ field.label|lower }}" 
-                  name="{{ field.name }}" required
-                  value="{% if field.value %}{{ field.value }}{%endif%}">
+                  <input type="{% if field.name == 'password' %}password{%else%}text{%endif%}" class="form-control" placeholder="Escribe tu {{ field.label|lower }}"
+                          name="{{ field.name }}" required
+                          value="{% if field.value %}{{ field.value }}{%endif%}">
                 </div>
                 {% endfor %} 
-                <div class="forgotpass">
-                  <div class="remember-me">
-                    <label class="custom_check mr-2 mb-0 d-inline-flex remember-me"> Recuerdame
-                      <input type="checkbox" name="radio">
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-                  <a href="forgot-password.html">¿Recuperar contraseña?</a>
-                </div>
+{#                <div class="forgotpass">#}
+{#                  <div class="remember-me">#}
+{#                    <label class="custom_check mr-2 mb-0 d-inline-flex remember-me"> Recuerdame#}
+{#                      <input type="checkbox" name="radio">#}
+{#                      <span class="checkmark"></span>#}
+{#                    </label>#}
+{#                  </div>#}
+{#                  <a href="forgot-password.html">¿Recuperar contraseña?</a>#}
+{#                </div>#}
                 <div class="form-group">
                   <button class="btn btn-primary btn-block" type="submit">Ingresar</button>
                 </div>
