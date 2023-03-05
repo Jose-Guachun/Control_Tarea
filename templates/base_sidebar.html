@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}INICIO{% endblock %}
+{% block sidebar%}
+<div class="sidebar" style="background-color: rgb(210, 230, 244);" id="sidebar">
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+                <li class="menu-title">
+                    <span>Main Menu</span>
+                </li>
+                <li>
+                    <a href="{% url 'home' %}"><i class="zmdi zmdi-home"></i> <span>Inicio</span></a>
+                </li>
+                <li>
+                    <a href=""><i class="zmdi zmdi-view-dashboard"></i> <span>
+                            Dashboard</span></a>
+
+                </li>
+                <li>
+                    <a href=""><i class="zmdi zmdi-link"></i> <span>Tareas-Recursos</span> </a>
+                </li>
+
+               
+            </ul>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block content%}
+    
+{% endblock %}

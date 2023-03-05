@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}INICIO{% endblock %}
+{% block sidebar %} 
+<div class="sidebar" style="background-color: rgb(210, 230, 244);" id="sidebar">
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+                <li class="menu-title">
+                    <span>Opciones</span>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-user"></i> <span>Registrar Información</span></a>
+                </li>
+               
+            </ul>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+{% block content%}
+<div class="card">
+    <div class='card-body border-top border-3 rounded-3 border-primary'>
+        <h2> <i class="fa fa-user"></i>   Registrar información</h2>
+        {% if error %}
+            <p class="alert alert-danger">{{error}}</p>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" id="updateForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="addpersona">
+            <div class="row">
+                {% for field in form %}
+                <div class="mb-2 col-12 col-md-6">
+                <label for="" class="ms-1 mb-1">{{ field.label }} :</label>
+                <div>
+                    {{field}}
+                </div>
+                {% if field.errors %}
+                <small class="text-danger ms-1">
+                    <i class="fa fa-info-circle"></i>
+                    {% for error in field.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </small>
+                {%endif%}
+                </div>
+                {% endfor %} 
+            </div>
+            <div class="save-stngs pd2 text-center py-3">
+                <ul>
+                    <li>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Guardar</button>
+                        <a class="btn btn-danger" href=""> <i class="fa fa-trash"></i>   Cancelar</a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block srcjs %}
+<script>
+    $(function(){
+        $("select").select2({width:"100%"})
+    });
+
+    
+</script>
+{% endblock %}

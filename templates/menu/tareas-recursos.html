@@ -1,0 +1,517 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}INICIO{% endblock %}
+<link type="text/css" rel="shortcut icon" href="{% static 'image/nuevas/flask.png' %}" />
+<link type="text/css" rel="shortcut icon" href="{% static 'image/nuevas/logo1.png' %}" />
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+{% block content%}
+
+
+<div class="page-wrapper">
+    <div class="content container-fluid">
+
+        <div class="card-body pt-0">
+            <form>
+                <div class="settings-form">
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Curso <span class="star-red">*</span></label>
+                                <select class="select form-control">
+                                    <option selected="selected">Curso</option>
+                                    <option>8vo</option>
+                                    <option>9no</option>
+                                    <option>10mo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Asignatura <span class="star-red">*</span></label>
+                                <select class="select form-control">
+                                    <option selected="selected">Asignatura</option>
+                                    <option>Lenguaje</option>
+                                    <option>Matematica</option>
+                                    <option>Ingles</option>
+                                    <option>Ciencias</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Tareas</h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <form>
+                            <div class="settings-form">
+
+                                <div class="form-group">
+                                    <p class="settings-label">Tarea </p>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-10">
+                                            <input class="form-control" type="file">
+                                        </div>
+                                    </div>
+                                    <h6 class="settings-size">Recommended upload in pdf</h6>
+                                </div>
+
+
+
+
+                                <section class="content-video">
+                                    <h4>Generar códigos QR <br>
+                                        <img src="{% static 'image/nuevas/link.png' %}" style="max-width: 100px;"
+                                            alt="link">
+                                    </h4>
+                                </section>
+                                <form class="content-video" action="('CrearCodigoQR')" method="POST" autocomplete="off">
+                                    <div class="search-local">
+
+                                        <button>Generar <strong> QR</strong></button>
+                                    </div>
+
+                                </form>
+
+                                <!--Mostrando mensaje de alerta-->
+
+                                <div class="alert success">
+                                    <h5>Código QR creado correctamente, <button>Descargar <strong>
+                                                QR</strong></button><a
+                                            href="('descargar_qr', nombreImagenQR = imgQR )"></a></h5>
+                                </div>
+
+
+
+                                <div class="form-group mb-0">
+                                    <div class="settings-btns">
+                                        <button type="submit" class="btn btn-orange">Save</button>
+                                        <button type="submit" class="btn btn-grey">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Tareas</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="dataTables_length" id="DataTables_Table_0_length"><label>Show <select
+                                        name="DataTables_Table_0_length" aria-controls="DataTables_Table_0"
+                                        class="custom-select custom-select-sm form-control form-control-sm">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select> entries</label></div>
+                        </div>
+                        <div class="col-sm-12 col-md-6"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table
+                                class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
+                                id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                                <thead class="student-thread">
+                                    <tr role="row">
+                                        <th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0"
+                                            rowspan="1" colspan="1" style="width: 22.5px;" aria-sort="ascending"
+                                            aria-label="
+                
+                
+                
+                : activate to sort column descending">
+                                            <div class="form-check check-tables">
+                                                <input class="form-check-input" type="checkbox" value="something">
+                                            </div>
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                            colspan="1" style="width: 42.2px;"
+                                            aria-label="ID: activate to sort column ascending">ID</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                            colspan="1" style="width: 153.2px;"
+                                            aria-label="Asignatura: activate to sort column ascending">Descripcion</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                            colspan="1" style="width: 153.2px;"
+                                            aria-label="Asignatura: activate to sort column ascending">Asignatura</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                            colspan="1" style="width: 37.1px;"
+                                            aria-label="Curso: activate to sort column ascending">Curso</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                            colspan="1" style="width: 68.8px;"
+                                            aria-label="PDF: activate to sort column ascending">PDF</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                            colspan="1" style="width: 88.2167px;"
+                                            aria-label="Fecha: activate to sort column ascending">Fecha</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                            colspan="1" style="width: 102.2px;"
+                                            aria-label="QR: activate to sort column ascending">Cod QR
+                                        </th>
+                                        <th class="text-end sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                            rowspan="1" colspan="1" style="width: 72px;"
+                                            aria-label="Action: activate to sort column ascending">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    <tr role="row" class="odd">
+                                        <td class="sorting_1">
+                                            <div class="form-check check-tables">
+                                                <input class="form-check-input" type="checkbox" value="something">
+                                            </div>
+                                        </td>
+                                        <td>TR1</td>
+                                        <td>Tarea 1</td>
+                                        <td><h2 class="table-avatar"><a>Ciencias</a></h2></td>
+                                        <td>10 A</td>
+                                        <td>tarea1.pdf</td>
+                                        <td>2 Feb 2002</td>
+                                        <td><a href="{% static 'image/nuevas/link.png' %}" class="avatar avatar-sm me-2"><img
+                                            class="avatar-img rounded-circle"
+                                            src="{% static 'image/nuevas/link.png' %}" alt="User Image"></a></td>
+                                        <td class="text-end">
+                                            <div class="actions ">
+                                                <a href="javascript:;" class="btn btn-sm bg-success-light me-2 ">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="edit-student.html" class="btn btn-sm bg-danger-light">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                    
+                                    <tr role="row" class="even">
+                                        <td class="sorting_1">
+                                            <div class="form-check check-tables">
+                                                <input class="form-check-input" type="checkbox" value="something">
+                                            </div>
+                                        </td>
+                                        <td>TRT2</td>
+                                        <td>Tarea 2</td>
+                                        <td><h2 class="table-avatar"><a>Matematica</a></h2></td>
+                                        <td>11 B</td>
+                                        <td>tarea2.pdf</td>
+                                        <td>13 Sept 2003</td>
+                                        <td><a href="{% static 'image/nuevas/link.png' %}" class="avatar avatar-sm me-2"><img
+                                            class="avatar-img rounded-circle"
+                                            src="{% static 'image/nuevas/link.png' %}" alt="User Image"></a></td>
+                                        <td class="text-end">
+                                            <div class="actions ">
+                                                <a href="javascript:;" class="btn btn-sm bg-success-light me-2 ">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="edit-student.html" class="btn btn-sm bg-danger-light">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">
+                                Showing 1 to 10 of 11 entries</div>
+                        </div>
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+                                <ul class="pagination">
+                                    <li class="paginate_button page-item previous disabled"
+                                        id="DataTables_Table_0_previous"><a href="#" aria-controls="DataTables_Table_0"
+                                            data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
+                                    <li class="paginate_button page-item active"><a href="#"
+                                            aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0"
+                                            class="page-link">1</a></li>
+                                    <li class="paginate_button page-item "><a href="#"
+                                            aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="0"
+                                            class="page-link">2</a></li>
+                                    <li class="paginate_button page-item next" id="DataTables_Table_0_next"><a href="#"
+                                            aria-controls="DataTables_Table_0" data-dt-idx="3" tabindex="0"
+                                            class="page-link">Next</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+
+            <!----RECURSOS-->
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Recursos</h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <form>
+                            <div class="settings-form">
+
+                                <div class="form-group">
+                                    <p class="settings-label">Presentaciones </p>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-10">
+                                            <input class="form-control" type="file">
+                                        </div>
+                                    </div>
+                                    <h6 class="settings-size">Recommended upload in pdf</h6>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <p class="settings-label">Videos </p>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-10">
+                                            <input class="form-control" type="file">
+                                        </div>
+                                    </div>
+                                    <h6 class="settings-size">Recommended upload in URL</h6>
+                                </div>
+
+
+
+                                <section class="content-video">
+                                    <h4>Generar códigos QR <br>
+                                        <img src="{% static 'image/nuevas/link.png' %}"
+                                            style="max-width: 100px; margin-left: 80px ;" alt="link">
+                                    </h4>
+                                </section>
+                                <form class="content-video" action="('CrearCodigoQR')" method="POST" autocomplete="off">
+                                    <div class="search-local" style=" margin-left: 85px">
+
+                                        <button>Generar <strong> QR</strong></button>
+                                    </div>
+
+                                </form>
+
+                                <!--Mostrando mensaje de alerta-->
+
+                                <div class="alert success">
+                                    <h5>Código QR creado correctamente, <button>Descargar <strong>
+                                                QR</strong></button><a
+                                            href="('descargar_qr', nombreImagenQR = imgQR )"></a></h5>
+                                </div>
+
+
+
+                                <div class="form-group mb-0">
+                                    <div class="settings-btns">
+                                        <button type="submit" class="btn btn-orange">Save</button>
+                                        <button type="submit" class="btn btn-grey">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="page-title">Recursos</h3>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="table-responsive">
+                    <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_length" id="DataTables_Table_0_length"><label>Show <select
+                                            name="DataTables_Table_0_length" aria-controls="DataTables_Table_0"
+                                            class="custom-select custom-select-sm form-control form-control-sm">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select> entries</label></div>
+                            </div>
+                            <div class="col-sm-12 col-md-6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table
+                                    class="table border-0 star-student table-hover table-center mb-0 datatable table-striped dataTable no-footer"
+                                    id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                                    <thead class="student-thread">
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0"
+                                                rowspan="1" colspan="1" style="width: 22.5px;" aria-sort="ascending"
+                                                aria-label="
+                    
+                    
+                    
+                    : activate to sort column descending">
+                                                <div class="form-check check-tables">
+                                                    <input class="form-check-input" type="checkbox" value="something">
+                                                </div>
+                                            </th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 42.2px;"
+                                                aria-label="ID: activate to sort column ascending">ID</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 153.2px;"
+                                                aria-label="Asignatura: activate to sort column ascending">Descripcion</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 153.2px;"
+                                                aria-label="Asignatura: activate to sort column ascending">Asignatura</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 37.1px;"
+                                                aria-label="Curso: activate to sort column ascending">Curso</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 68.8px;"
+                                                aria-label="PDF: activate to sort column ascending">Presentacion</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 68.8px;"
+                                                aria-label="URL: activate to sort column ascending">Video</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 88.2167px;"
+                                                aria-label="Fecha: activate to sort column ascending">Fecha</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                colspan="1" style="width: 102.2px;"
+                                                aria-label="QR: activate to sort column ascending">Cod QR
+                                            </th>
+                                            <th class="text-end sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                rowspan="1" colspan="1" style="width: 72px;"
+                                                aria-label="Action: activate to sort column ascending">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+    
+    
+                                        <tr role="row" class="odd">
+                                            <td class="sorting_1">
+                                                <div class="form-check check-tables">
+                                                    <input class="form-check-input" type="checkbox" value="something">
+                                                </div>
+                                            </td>
+                                            <td>PRES1</td>
+                                            <td>Recurso 1</td>
+                                            <td><h2 class="table-avatar"><a>Ciencias</a></h2></td>
+                                            <td>10 A</td>
+                                            <td>presentacion1.pdf</td>
+                                            <td>https://www.youtube.com/watch?v=e6PkGDH4wWA&t=1907s</td>
+                                            <td>2 Feb 2002</td>
+                                            <td><a href="{% static 'image/nuevas/link.png' %}" class="avatar avatar-sm me-2"><img
+                                                class="avatar-img rounded-circle"
+                                                src="{% static 'image/nuevas/link.png' %}" alt="User Image"></a></td>
+                                            <td class="text-end">
+                                                <div class="actions ">
+                                                    <a href="javascript:;" class="btn btn-sm bg-success-light me-2 ">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="edit-student.html" class="btn btn-sm bg-danger-light">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        
+                                        
+                                        <tr role="row" class="even">
+                                            <td class="sorting_1">
+                                                <div class="form-check check-tables">
+                                                    <input class="form-check-input" type="checkbox" value="something">
+                                                </div>
+                                            </td>
+                                            <td>PRES2</td>
+                                            <td>Recurso 2</td>
+                                            <td><h2 class="table-avatar"><a>Matematica</a></h2></td>
+                                            <td>11 B</td>
+                                            <td>presentacion2.pdf</td>
+                                            <td>https://www.youtube.com/watch?v=e6PkGDH4wWA&t=1907s</td>
+                                            <td>13 Sept 2003</td>
+                                            <td><a href="{% static 'image/nuevas/link.png' %}" class="avatar avatar-sm me-2"><img
+                                                class="avatar-img rounded-circle"
+                                                src="{% static 'image/nuevas/link.png' %}" alt="User Image"></a></td>
+                                            <td class="text-end">
+                                                <div class="actions ">
+                                                    <a href="javascript:;" class="btn btn-sm bg-success-light me-2 ">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="edit-student.html" class="btn btn-sm bg-danger-light">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-5">
+                                <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">
+                                    Showing 1 to 10 of 11 entries</div>
+                            </div>
+                            <div class="col-sm-12 col-md-7">
+                                <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+                                    <ul class="pagination">
+                                        <li class="paginate_button page-item previous disabled"
+                                            id="DataTables_Table_0_previous"><a href="#" aria-controls="DataTables_Table_0"
+                                                data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
+                                        <li class="paginate_button page-item active"><a href="#"
+                                                aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0"
+                                                class="page-link">1</a></li>
+                                        <li class="paginate_button page-item "><a href="#"
+                                                aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="0"
+                                                class="page-link">2</a></li>
+                                        <li class="paginate_button page-item next" id="DataTables_Table_0_next"><a href="#"
+                                                aria-controls="DataTables_Table_0" data-dt-idx="3" tabindex="0"
+                                                class="page-link">Next</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+            
+
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<!------>
+
+
+
+
+
+{% endblock %}

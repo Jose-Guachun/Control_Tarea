@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <title>Preskool - Register</title>
+  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/nuevas/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fontawesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/nuevas/feather.css' %}">
+  <link rel="stylesheet" href="{% static 'css/nuevas/flags.css' %}">
+  <link rel="stylesheet" href="{% static 'css/nuevas/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/nuevas/style1.css' %}">
+</head>
+</head>
+<body>
+
+<div class="main-wrapper login-body">
+<div class="login-wrapper">
+<div class="container">
+<div class="loginbox">
+<div class="login-left">
+<img class="img-fluid" src="{% static 'image/nuevas/login.png' %}" alt="Logo">
+</div>
+<div class="login-right">
+<div class="login-right-wrap">
+<h1>Registrate</h1>
+<p class="account-subtitle">Ingresa los datos para crear tu cuenta</p>
+<form action="/signup/" method="POST">
+  {% csrf_token %} 
+  <p class="fs-6 text-danger">{{error}}</p>
+  
+  {% for field in form %}
+  <div class="mb-2">
+    <label for="" class="ms-1 mb-1">{{ field.label }} <i class="text-danger fw-bold fs-6">*</i>:</label>
+    <input 
+    type="{% if field.name == 'password1' or field.name == 'password2' %}password{%else%}text{%endif%}" 
+    class="form-control" placeholder="Escribe tu {{ field.label|lower }}" 
+    name="{{ field.name }}" required
+    value="{% if field.value %}{{ field.value }}{%endif%}">
+    {% if field.errors %}
+    <small class="text-danger ms-1">
+      <i class="fa fa-info-circle"></i>
+      {% for error in field.errors %}
+          {{ error }}
+      {% endfor %}
+    </small>
+    {%endif%}
+  </div>
+  {% endfor %} 
+
+<div class=" dont-have">¿Ya estas registrado? <a href="{% url 'login' %}">Ingresa aquí!</a></div>
+<div class="form-group mb-0">
+<button class="btn btn-primary btn-block" type="submit">Registrar</button>
+</div>
+</form>
+
+<div class="login-or">
+<span class="or-line"></span>
+<span class="span-or">o</span>
+</div>
+
+<div class="social-login">
+<a href="#"><i class="fab fa-google-plus-g"></i></a>
+<a href="#"><i class="fab fa-facebook-f"></i></a>
+<a href="#"><i class="fab fa-twitter"></i></a>
+<a href="#"><i class="fab fa-linkedin-in"></i></a>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<script src="assets/js/jquery-3.6.0.min.js"></script>
+<script src="assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/feather.min.js"></script>
+
+<script src="assets/js/script.js"></script>
+</body>
+</html>
+
+
