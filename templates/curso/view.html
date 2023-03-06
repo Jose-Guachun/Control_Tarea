@@ -7,7 +7,7 @@
         <h1><i class="fa-solid fa-layer-group"></i> {{title}}</h1>
     </div>
     <div class="row ps-2">
-        <div class="col-12 py-3">
+        <div class="col-12 pb-3">
             <a href="{% url 'sistema' 'addcurso' %}" class="btn btn-success"><i class="fa fa-plus-circle"></i> Adicionar</a>
         </div>
     </div>
@@ -20,6 +20,7 @@
                     <th class="text-center fs-3">Curso</th>
                     <th class="text-center fs-3">Asignatura</th>
                     <th class="text-center fs-3">Profesor</th>
+                    <th class="text-center fs-3">Estudiantes</th>
                     <th class="text-center fs-3">Acciones</th>
                 </tr>
                 </thead>
@@ -38,17 +39,27 @@
                         <td class="text-center">
                             {{ list.profesor }}
                         </td>
-                        <td class="text-center w-10">
+                        <td class="text-left">
+                            <ul>
+                                {% for estudiante in list.estudiantes.all %}
+                                    <li><i class="fa-solid fa-arrow-circle-right"></i> {{ estudiante.nombre_simple }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td class="text-center w-5">
                            <div class="dropdown">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Acciones <i class="fa fa-angle-down"></i>
                                 </button>
-                                <ul class="dropdown-menu pull-right" x-placement="right-start">
-                                    <li class="dropdown-item">
-                                        <a href="{% url 'sistema' 'editcurso' %}?id={{ list.id }}"><span class="fa fa-edit"></span> Editar</a>
+                                <ul class="dropdown-menu pull-right fs-3" x-placement="right-start">
+                                    <li>
+                                        <a href="{% url 'sistema' 'editcurso' %}?id={{ list.id }}" class="dropdown-item"><span class="fa fa-edit"></span> Editar</a>
                                     </li>
-                                      <li class="dropdown-item">
-                                        <a href="javascript:void(0);" onclick="eliminarajax('{{ list.id }}', '{{ list }}','delcurso')"><span class="fa fa-trash"></span> Eliminar</a>
+                                     <li>
+                                        <a href="{% url 'sistema' 'tareas' %}?id={{ list.id }}" class="dropdown-item"><span class="fa fa-list-check"></span> Tareas</a>
+                                    </li>
+                                      <li>
+                                        <a href="javascript:void(0);" onclick="eliminarajax('{{ list.id }}', '{{ list }}','delcurso')" class="dropdown-item"><span class="fa fa-trash"></span> Eliminar</a>
                                     </li>
                                 </ul>
                             </div>

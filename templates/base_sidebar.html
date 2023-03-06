@@ -12,13 +12,18 @@
                 <li>
                     <a href="{% url 'home'%}"><i class="zmdi zmdi-home"></i> <span>Inicio</span></a>
                 </li>
+                {% if persona.perfil == 2 %}
+                    <li>
+                        <a href="{% url 'sistema' 'cursos' %}"><i class="fa-solid fa-layer-group"></i> <span>Cursos</span> </a>
+                    </li>
+                {% endif %}
                 <li>
                     <a href=""><i class="zmdi zmdi-view-dashboard"></i> <span>
                             Dashboard</span></a>
 
                 </li>
                 <li>
-                    <a href=""><i class="zmdi zmdi-link"></i> <span>Tareas-Recursos</span> </a>
+                    <a href=""><i class="fa-solid fa-file-lines"></i> <span>Recursos</span> </a>
                 </li>
 
                
