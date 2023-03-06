@@ -266,6 +266,42 @@ def cargarsistema(request, action):
                 return render(request, template, data)
             except Exception as ex:
                 pass
+
+        if action == 'tareas':
+            data['title'] = 'Tareas'
+            data['curso_a']=curso_a=CursoAsignatura.objects.get(id=request.GET['id'])
+            search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
+            if search:
+                filtro = filtro & Q(nombre__icontains=search)
+                url_vars += '&s=' + search
+                data['search'] = search
+            listado =Task.objects.filter(filtro).order_by('-id')
+            paging = MiPaginador(listado, 20)
+            p = 1
+            try:
+                paginasesion = 1
+                if 'paginador' in request.session:
+                    paginasesion = int(request.session['paginador'])
+                if 'page' in request.GET:
+                    p = int(request.GET['page'])
+                else:
+                    p = paginasesion
+                try:
+                    page = paging.page(p)
+                except:
+                    p = 1
+                page = paging.page(p)
+            except:
+                page = paging.page(p)
+            request.session['paginador'] = p
+            data['paging'] = paging
+            data['rangospaging'] = paging.rangos_paginado(p)
+            data['page'] = page
+            data["url_vars"] = url_vars
+            data['listado'] = page.object_list
+            data['totcount'] = listado.count()
+            request.session['viewactivo'] = 1
+            return render(request, 'curso/viewtareas.html', data)
         else:
             template = 'home.html'
             return render(request, template, data)
