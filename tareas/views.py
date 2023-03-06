@@ -47,7 +47,7 @@ class LoginView(FormView):
     # login view
     template_name = 'signin.html'
     form_class = LoginForm
-    success_url = reverse_lazy('home', kwargs={'action':'home'})
+    success_url = reverse_lazy('home')
 
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
@@ -61,6 +61,51 @@ class LoginView(FormView):
         login(self.request, form.get_user())
         return super(LoginView, self).form_valid(form)
 
+@login_required
+@transaction.atomic()
+def home(request):
+    data={}
+    usuario = request.user
+    if request.method == 'POST':
+        action = request.POST['action']
+        if action == 'addpersona':
+            try:
+                form = PersonaForm(request.POST)
+                if form.is_valid():
+                    if not Persona.objects.filter(user=request.user).exists():
+                        instance = Persona(nombres=form.cleaned_data['nombres'],
+                                           user=request.user,
+                                           apellido1=form.cleaned_data['apellido1'],
+                                           apellido2=form.cleaned_data['apellido2'],
+                                           cedula=form.cleaned_data['cedula'],
+                                           genero=form.cleaned_data['genero'],
+                                           perfil=form.cleaned_data['perfil'],
+                                           fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
+                                           telefono=form.cleaned_data['telefono'],
+                                           direccion=form.cleaned_data['direccion'],
+                                           ciudad=form.cleaned_data['ciudad'],
+                                           )
+                        instance.save(request)
+                        if 'picture' in request.FILES:
+                            newfile = request.FILES['picture']
+                            newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
+                            instance.picture = newfile
+                        instance.save(request)
+                    return redirect('home')
+                else:
+                    return render(request, 'actualizarperfil.html', {"form": form})
+            except Exception as ex:
+                transaction.set_rollback(True)
+                return render(request, 'actualizarperfil.html',
+                              {"error": "Error: {}".format(str(ex)), "form": PersonaForm(request.POST)})
+    else:
+        if not Persona.objects.filter(user=usuario).exists():
+            data['form']=PersonaForm()
+            template = 'actualizarperfil.html'
+        else:
+            data['persona'] = Persona.objects.get(user=usuario)
+            template = 'home.html'
+        return render(request, template, data)
 
 @login_required
 @transaction.atomic()
@@ -112,15 +157,15 @@ def cargarsistema(request, action):
                     instance.save(request)
                     for estuidante in form.cleaned_data['estudiantes']:
                         instance.estudiantes.add(estuidante)
-                    return redirect(reverse_lazy('home', kwargs={'action':'cursos'}))
+                    return redirect(reverse_lazy('sistema', kwargs={'action':'cursos'}))
                 else:
                     messages.error(request, [v[0]for k, v in form.errors.items()])
-                    return redirect(reverse_lazy('home', kwargs={'action': 'addcurso'}))
+                    return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
                 transaction.set_rollback(True)
                 messages.error(request, '')
-                return redirect(reverse_lazy('home', kwargs={'action': 'addcurso'}))
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
 
         if action == 'editcurso':
             try:
@@ -137,12 +182,12 @@ def cargarsistema(request, action):
                         curso_a.estudiantes.add(estuidante)
                 else:
                     messages.error(request, [v[0] for k, v in form.errors.items()])
-                return redirect(reverse_lazy('home', kwargs={'action': 'cursos'}))
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
                 transaction.set_rollback(True)
                 messages.error(request, 'Error por favor intentelo mas tarde')
-                return redirect(reverse_lazy('home', kwargs={'action': 'cursos'}))
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
 
         if action == 'delcurso':
             try:
@@ -207,6 +252,7 @@ def cargarsistema(request, action):
                 return render(request, template, data)
             except Exception as ex:
                 pass
+
         elif action == 'editcurso':
             try:
                 data['title'] = u'Adicionar Curso'
