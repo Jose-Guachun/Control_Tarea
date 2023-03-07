@@ -22,7 +22,7 @@
                 </a>
             </div> <!-- end card-->
             <div class="col-md-3">
-                <a href="">
+                <a href="{{request.path}}?action=recursos">
                     <div class="card" style="border:1px solid #CCC">
                         <div class="card-header bg-light" style="height:40px">
                             <span class="text-dark">Recursos</span>
@@ -41,7 +41,7 @@
         {% endif %}
         {% if persona.perfil == 3 %}
         <div class="col-md-3">
-            <a href="{{request.path}}?action=cursos">
+            <a href="{{request.path}}?action=recursos">
                 <div class="card" style="border:1px solid #CCC">
                     <div class="card-header bg-light" style="height:40px">
                         <span class="text-dark">Estudiantes</span>

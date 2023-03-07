@@ -107,3 +107,20 @@ class CursoAsignaturaForm(FormModeloBase):
             'profesor': forms.Select(attrs={'class': 'form-control'}),
             'estudiantes': forms.SelectMultiple(attrs={'class': 'form-control'}),
             }
+
+
+class RecursoForm(FormModeloBase):
+    class Meta:
+        model = Recurso
+        fields = [
+            "titulo",
+            "descripcion",
+            "archivo",
+            "enlace",
+        ]
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.TextInput(attrs={'class': 'form-control'}),
+            'archivo': forms.FileInput(attrs={'class': 'form-control'}),
+            'enlace': forms.TextInput(attrs={'class': 'form-control'}),
+        }

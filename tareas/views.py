@@ -197,6 +197,63 @@ def cargarsistema(request, action):
             except Exception as ex:
                 res_json = {'error': True, "message": "Error: {}".format(ex)}
             return JsonResponse(res_json, safe=False)
+
+        # Recursos
+        if action == 'addrecurso':
+            try:
+                form = RecursoForm(request.POST)
+                if form.is_valid():
+                    instance = Recurso(titulo=form.cleaned_data['titulo'],
+                                               descripcion=form.cleaned_data['descripcion'],
+                                               archivo=form.cleaned_data['archivo'],
+                                               enlace=form.cleaned_data['enlace']
+                                               )
+                    instance.save(request)
+                    # for estuidante in form.cleaned_data['estudiantes']:
+                    #     instance.estudiantes.add(estuidante)
+                    return redirect(reverse_lazy('sistema', kwargs={'action':'recursos'}))
+                else:
+                    messages.error(request, [v[0]for k, v in form.errors.items()])
+                    return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
+            except Exception as ex:
+                transaction.set_rollback(True)
+                messages.error(request, '')
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+
+        if action == 'editrecurso':
+            try:
+                id=request.POST['id']
+                recurso=Recurso.objects.get(id=id)
+                form = RecursoForm(request.POST, instance=recurso)
+                if form.is_valid():
+                    recurso.titulo=form.cleaned_data['curso']
+                    recurso.descripcion=form.cleaned_data['asignatura']
+                    recurso.archivo=form.cleaned_data['archivo']
+                    recurso.enlace=form.cleaned_data['enlace']
+                    recurso.save(request)
+                    # recurso.estudiantes.clear()
+                    # for estuidante in form.cleaned_data['estudiantes']:
+                    #     recurso.estudiantes.add(estuidante)
+                else:
+                    messages.error(request, [v[0] for k, v in form.errors.items()])
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'recursos'}))
+                    # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
+            except Exception as ex:
+                transaction.set_rollback(True)
+                messages.error(request, 'Error. Por favor intentelo mas tarde')
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'recursos'}))
+
+        if action == 'delrecurso':
+            try:
+                instancia = Recurso.objects.get(pk=request.POST['id'])
+                instancia.status = False
+                instancia.save(request)
+                res_json = {"error": False}
+            except Exception as ex:
+                res_json = {'error': True, "message": "Error: {}".format(ex)}
+            return JsonResponse(res_json, safe=False)
+
         return JsonResponse({"result": "bad", "mensaje": u"Solicitud Incorrecta."})
     else:
         if not persona:
@@ -206,6 +263,7 @@ def cargarsistema(request, action):
             # data['action'] = action = request.GET['action']
         data['persona'] = persona = Persona.objects.get(user=usuario)
         data['action'] = action
+
         if action == 'cursos':
             data['title'] = 'Cursos'
             search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
@@ -302,6 +360,69 @@ def cargarsistema(request, action):
             data['totcount'] = listado.count()
             request.session['viewactivo'] = 1
             return render(request, 'curso/viewtareas.html', data)
+
+        # Recursos
+        if action == 'recursos':
+            data['title'] = 'Recursos'
+            search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
+            if search:
+                filtro = filtro & Q(titulo__icontains=search)
+                url_vars += '&s=' + search
+                data['search'] = search
+            listado = Recurso.objects.filter(filtro).order_by('-id')
+            paging = MiPaginador(listado, 20)
+            p = 1
+            try:
+                paginasesion = 1
+                if 'paginador' in request.session:
+                    paginasesion = int(request.session['paginador'])
+                if 'page' in request.GET:
+                    p = int(request.GET['page'])
+                else:
+                    p = paginasesion
+                try:
+                    page = paging.page(p)
+                except:
+                    p = 1
+                page = paging.page(p)
+            except:
+                page = paging.page(p)
+            request.session['paginador'] = p
+            data['paging'] = paging
+            data['rangospaging'] = paging.rangos_paginado(p)
+            data['page'] = page
+            data["url_vars"] = url_vars
+            data['listado'] = page.object_list
+            data['totcount'] = listado.count()
+            request.session['viewactivo'] = 1
+            return render(request, 'recurso/view.html', data)
+
+        elif action == 'addrecurso':
+            try:
+                data['title'] = u'Adicionar Recurso'
+                form = RecursoForm()
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                # form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                data['form'] = form
+                template = "recurso/modal/formrecurso.html"
+                return render(request, template, data)
+            except Exception as ex:
+                pass
+
+        elif action == 'editrecurso':
+            try:
+                data['title'] = u'Adicionar Recurso'
+                id=request.GET["id"]
+                data['recurso']= recurso =Recurso.objects.get(id=id)
+                form = RecursoForm(initial=model_to_dict(recurso))
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                # form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                data['form'] = form
+                template = "recurso/modal/formrecurso.html"
+                return render(request, template, data)
+            except Exception as ex:
+                pass
+
         else:
             template = 'home.html'
             return render(request, template, data)
