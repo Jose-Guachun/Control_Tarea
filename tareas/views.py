@@ -198,6 +198,55 @@ def cargarsistema(request, action):
                 res_json = {'error': True, "message": "Error: {}".format(ex)}
             return JsonResponse(res_json, safe=False)
 
+        if action == 'addtarea':
+            try:
+                form = TaskForm(request.POST)
+                if form.is_valid():
+                    instance = Task(curso=form.cleaned_data['curso'],
+                                               asignatura=form.cleaned_data['asignatura'],
+                                               profesor=form.cleaned_data['profesor'],)
+                    instance.save(request)
+                    return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+                else:
+                    messages.error(request, [v[0] for k, v in form.errors.items()])
+                    return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
+                    # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
+            except Exception as ex:
+                transaction.set_rollback(True)
+                messages.error(request, '')
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
+
+        if action == 'edittarea':
+            try:
+                id = request.POST['id']
+                curso_a = CursoAsignatura.objects.get(id=id)
+                form = CursoAsignaturaForm(request.POST, instance=curso_a)
+                if form.is_valid():
+                    curso_a.curso = form.cleaned_data['curso']
+                    curso_a.asignatura = form.cleaned_data['asignatura']
+                    curso_a.profesor = form.cleaned_data['profesor']
+                    curso_a.save(request)
+                    curso_a.estudiantes.clear()
+                    for estuidante in form.cleaned_data['estudiantes']:
+                        curso_a.estudiantes.add(estuidante)
+                else:
+                    messages.error(request, [v[0] for k, v in form.errors.items()])
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+                # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
+            except Exception as ex:
+                transaction.set_rollback(True)
+                messages.error(request, 'Error por favor intentelo mas tarde')
+                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+
+        if action == 'deltarea':
+            try:
+                instancia = CursoAsignatura.objects.get(pk=request.POST['id'])
+                instancia.delete()
+                res_json = {"error": False}
+            except Exception as ex:
+                res_json = {'error': True, "message": "Error: {}".format(ex)}
+            return JsonResponse(res_json, safe=False)
+
         # Recursos
         if action == 'addrecurso':
             try:
@@ -263,7 +312,6 @@ def cargarsistema(request, action):
             # data['action'] = action = request.GET['action']
         data['persona'] = persona = Persona.objects.get(user=usuario)
         data['action'] = action
-
         if action == 'cursos':
             data['title'] = 'Cursos'
             search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
@@ -328,7 +376,7 @@ def cargarsistema(request, action):
         if action == 'tareas':
             data['title'] = 'Tareas'
             data['curso_a']=curso_a=CursoAsignatura.objects.get(id=request.GET['id'])
-            search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
+            search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), f'&id={curso_a.id}'
             if search:
                 filtro = filtro & Q(nombre__icontains=search)
                 url_vars += '&s=' + search
@@ -360,6 +408,17 @@ def cargarsistema(request, action):
             data['totcount'] = listado.count()
             request.session['viewactivo'] = 1
             return render(request, 'curso/viewtareas.html', data)
+
+        elif action == 'addtarea':
+            try:
+                data['idp']=request.GET['idp']
+                data['title'] = u'Adicionar Tarea'
+                form = TaskForm()
+                data['form'] = form
+                template = "curso/modal/formtarea.html"
+                return render(request, template, data)
+            except Exception as ex:
+                pass
 
         # Recursos
         if action == 'recursos':

@@ -48,16 +48,10 @@ class FormModeloBase(forms.ModelForm):
             if not 'col' in self.fields[k].widget.attrs:
                 self.fields[k].widget.attrs['col'] = "12"
             if self.fields[k].required and self.fields[k].label:
-                self.fields[k].label = mark_safe(self.fields[k].label + '<span style="color:red;margin-left:2px;"><strong>*</strong></span>')
+                self.fields[k].label = mark_safe(self.fields[k].label + '<span style="color:rgb(30, 144, 255);margin-left:2px;"><strong>*</strong></span>')
             self.fields[k].widget.attrs['data-nameinput'] = k
             if self.ver:
                 self.fields[k].widget.attrs['readonly'] = "readonly"
-
-
-class TaskForm(forms.ModelForm):
-    class Meta:
-        model = Task
-        fields = ['title', 'description', 'important']
 
 class LoginForm(AuthenticationForm):
     class Meta:
@@ -107,6 +101,21 @@ class CursoAsignaturaForm(FormModeloBase):
             'profesor': forms.Select(attrs={'class': 'form-control'}),
             'estudiantes': forms.SelectMultiple(attrs={'class': 'form-control'}),
             }
+
+
+class TaskForm(FormModeloBase):
+    class Meta:
+        model = Task
+        fields = [
+            "title",
+            "description",
+            "profesor",
+            "recursos",
+        ]
+        widgets = {
+            'profesor': forms.Select(attrs={'class': 'form-control'}),
+            'recursos': forms.SelectMultiple(attrs={'class': 'form-control'}),
+        }
 
 
 class RecursoForm(FormModeloBase):

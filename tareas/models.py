@@ -117,7 +117,7 @@ class Recurso(ModeloBase):
 class Task(ModeloBase):
     asignatura = models.ForeignKey(CursoAsignatura, on_delete=models.CASCADE, blank=True, null=True,verbose_name=u'Asignatura a la que pertenece la tarea')
     recursos = models.ManyToManyField(Recurso, verbose_name=u'Recursos de tarea')
-    title = models.CharField(default='', max_length=100, verbose_name=u'Titulo')
+    title = models.CharField(default='', max_length=100, verbose_name=u'Título')
     description = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
     important = models.BooleanField(default=False)
     profesor = models.ForeignKey(Persona, blank=True, null=True, on_delete=models.CASCADE)
