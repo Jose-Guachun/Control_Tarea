@@ -19,8 +19,9 @@
                     <th class="text-center fs-3">N</th>
                     <th class="text-center fs-3">Título</th>
                     <th class="text-center fs-3">Descripcion</th>
-                    <th class="text-center fs-3">Archivo</th>
+                    <th class="text-center fs-3">Tipo</th>
                     <th class="text-center fs-3">Enlace</th>
+                    <th class="text-center fs-3">Archivo</th>
                     <th class="text-center fs-3">Acciones</th>
                 </tr>
                 </thead>
@@ -37,10 +38,16 @@
                            {{ list.descripcion }}
                         </td>
                         <td class="text-center">
-                            {{ list.archivo }}
+                           {{ list.get_tipo_display }}
                         </td>
                         <td class="text-center">
-                            {{ list.archivo }}
+                            {{ list.enlace }}
+                        </td>
+                        <td class="text-center">
+                            {% if list.archivo %}
+                                <a target="_blank" title="" href="{{ list.archivo.url }}"
+                                   class="btn btn-success btn-mini tu"><i class="fa fa-eye"></i></a>
+                            {% endif %}
                         </td>
 {#                        <td class="text-left">#}
 {#                            <ul>#}

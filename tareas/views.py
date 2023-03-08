@@ -250,13 +250,18 @@ def cargarsistema(request, action):
         # Recursos
         if action == 'addrecurso':
             try:
-                form = RecursoForm(request.POST)
+                form = RecursoForm(request.POST, request.FILES)
                 if form.is_valid():
+                    enlace, archivo = form.cleaned_data['enlace'], request.FILES['archivo']
+                    if not enlace and not archivo:
+                        messages.error(request, f'Debe ingresar enlace o el archivo del recurso.')
+                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
                     instance = Recurso(titulo=form.cleaned_data['titulo'],
                                                descripcion=form.cleaned_data['descripcion'],
-                                               archivo=form.cleaned_data['archivo'],
-                                               enlace=form.cleaned_data['enlace']
-                                               )
+                                               tipo=form.cleaned_data['tipo'],
+                                               enlace=enlace,
+                                               archivo = archivo
+                    )
                     instance.save(request)
                     # for estuidante in form.cleaned_data['estudiantes']:
                     #     instance.estudiantes.add(estuidante)
@@ -276,10 +281,11 @@ def cargarsistema(request, action):
                 recurso=Recurso.objects.get(id=id)
                 form = RecursoForm(request.POST, instance=recurso)
                 if form.is_valid():
-                    recurso.titulo=form.cleaned_data['curso']
-                    recurso.descripcion=form.cleaned_data['asignatura']
-                    recurso.archivo=form.cleaned_data['archivo']
+                    recurso.titulo=form.cleaned_data['titulo']
+                    recurso.descripcion=form.cleaned_data['descripcion']
+                    recurso.tipo=form.cleaned_data['tipo']
                     recurso.enlace=form.cleaned_data['enlace']
+                    recurso.archivo=form.cleaned_data['archivo']
                     recurso.save(request)
                     # recurso.estudiantes.clear()
                     # for estuidante in form.cleaned_data['estudiantes']:
@@ -296,6 +302,8 @@ def cargarsistema(request, action):
         if action == 'delrecurso':
             try:
                 instancia = Recurso.objects.get(pk=request.POST['id'])
+                # Valida que el registro no esté en uso
+
                 instancia.status = False
                 instancia.save(request)
                 res_json = {"error": False}

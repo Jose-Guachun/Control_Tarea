@@ -17,10 +17,11 @@ PERFIL_USUARIO = (
     (2, 'Docente'),
     (3, 'Administrativo'),
 )
+
 TIPO_RECURSO = (
     (0, '----------'),
     (1, 'Video'),
-    (2, 'Archivo'),
+    (2, 'Documento'),
     (3, 'Enlace'),
 )
 
@@ -92,7 +93,7 @@ class Asignatura(ModeloBase):
 class CursoAsignatura(ModeloBase):
     curso = models.ForeignKey(Curso, verbose_name=u'Curso', on_delete=models.CASCADE)
     asignatura = models.ForeignKey(Asignatura, verbose_name=u'Asignatura', on_delete=models.CASCADE)
-    profesor = models.ForeignKey(Persona, verbose_name=u'Profesor', on_delete=models.CASCADE)
+    profesor = models.ForeignKey(Persona, verbose_name=u'Profesor', on_delete=models.CASCADE, null=True)
     cerrada = models.BooleanField(default=False, verbose_name=u'Cerrado')
     estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en la asignatura',
                                          related_name='+')
@@ -103,12 +104,12 @@ class CursoAsignatura(ModeloBase):
     class Meta:
         unique_together = ('curso', 'asignatura',)
 
-
 class Recurso(ModeloBase):
     titulo = models.CharField(max_length=200)
     descripcion = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
-    archivo = models.FileField(upload_to='Recursos', blank=True, null=True, verbose_name=u'Archivo')
+    tipo = models.IntegerField(choices=TIPO_RECURSO, default=0, verbose_name='Tipo de recurso', null=True, blank=True)
     enlace = models.CharField(default='', max_length=5000, verbose_name=u'Enlace')
+    archivo = models.FileField(upload_to='Recursos', blank=True, null=True, verbose_name=u'Archivo')
 
     def __str__(self):
         return self.titulo

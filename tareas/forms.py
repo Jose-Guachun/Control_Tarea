@@ -124,12 +124,14 @@ class RecursoForm(FormModeloBase):
         fields = [
             "titulo",
             "descripcion",
-            "archivo",
+            "tipo",
             "enlace",
+            "archivo",
         ]
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.TextInput(attrs={'class': 'form-control'}),
-            'archivo': forms.FileInput(attrs={'class': 'form-control'}),
-            'enlace': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo': forms.Select(attrs={'class': 'form-control'}),
+            'enlace': forms.TextInput(attrs={'class': 'form-control no_requeridos'}),
+            'archivo': forms.FileInput(attrs={'class': 'form-control no_requeridos'}),
         }
