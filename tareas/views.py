@@ -169,6 +169,8 @@ def cargarsistema(request, action):
         if action == 'addcurso':
             try:
                 form = CursoAsignaturaForm(request.POST)
+                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 if form.is_valid():
                     instance = CursoAsignatura(curso=form.cleaned_data['curso'],
                                                asignatura=form.cleaned_data['asignatura'],
@@ -179,19 +181,26 @@ def cargarsistema(request, action):
                         instance.estudiantes.add(estuidante)
                     return redirect(reverse_lazy('sistema', kwargs={'action':'cursos'}))
                 else:
-                    messages.error(request, [v[0]for k, v in form.errors.items()])
-                    return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
+                    return render(request, 'curso/modal/formcurso.html',
+                                  {"form": form,  "errors": [{v[0]} for k, v in form.errors.items()]})
+                    # return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
+                form = CursoAsignaturaForm(request.POST)
+                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 transaction.set_rollback(True)
-                messages.error(request, '')
-                return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
+                messages.error(request, str(ex))
+                return render(request, 'curso/modal/formcurso.html',
+                              {"form": form})
 
         if action == 'editcurso':
             try:
                 id=request.POST['id']
                 curso_a=CursoAsignatura.objects.get(id=id)
                 form = CursoAsignaturaForm(request.POST, instance=curso_a)
+                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 if form.is_valid():
                     curso_a.curso=form.cleaned_data['curso']
                     curso_a.asignatura=form.cleaned_data['asignatura']
@@ -200,14 +209,21 @@ def cargarsistema(request, action):
                     curso_a.estudiantes.clear()
                     for estuidante in form.cleaned_data['estudiantes']:
                         curso_a.estudiantes.add(estuidante)
+                    return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
                 else:
-                    messages.error(request, [v[0] for k, v in form.errors.items()])
-                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+                    return render(request, 'curso/modal/formcurso.html',
+                                  {"form": form,'id':request.POST['id'],'curso_a':curso_a, "errors": [{v[0]} for k, v in form.errors.items()]})
+
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
+                data['form'] = form = CursoAsignaturaForm(request.POST)
+                data['id'] = request.POST['id']
+                data['curso_a'] = curso_a = CursoAsignatura.objects.get(id=request.POST['id'])
+                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 transaction.set_rollback(True)
-                messages.error(request, 'Error por favor intentelo mas tarde')
-                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+                messages.error(request, str(ex))
+                return render(request, 'curso/modal/formcurso.html',data)
 
         if action == 'delcurso':
             try:
@@ -273,7 +289,7 @@ def cargarsistema(request, action):
                 messages.error(request, str(ex))
                 return render(request, 'curso/modal/formtarea.html',
                               {"error": "Error: {}".format(str(ex)), "form": TaskForm(request.POST),
-                               'title': 'Editar Tare',
+                               'title': 'Editar Tarea',
                                'id': request.POST['id'],
                                'idp': request.POST['idp']})
 
