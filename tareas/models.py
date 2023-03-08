@@ -19,7 +19,6 @@ PERFIL_USUARIO = (
 )
 
 TIPO_RECURSO = (
-    (0, '----------'),
     (1, 'Video'),
     (2, 'Documento'),
     (3, 'Enlace'),
@@ -107,7 +106,7 @@ class CursoAsignatura(ModeloBase):
 class Recurso(ModeloBase):
     titulo = models.CharField(max_length=200)
     descripcion = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
-    tipo = models.IntegerField(choices=TIPO_RECURSO, default=0, verbose_name='Tipo de recurso', null=True, blank=True)
+    tipo = models.IntegerField(choices=TIPO_RECURSO, default=1, verbose_name='Tipo de recurso', null=True, blank=True)
     enlace = models.CharField(default='', max_length=5000, verbose_name=u'Enlace')
     archivo = models.FileField(upload_to='Recursos', blank=True, null=True, verbose_name=u'Archivo')
 

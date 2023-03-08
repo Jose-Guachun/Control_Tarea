@@ -252,7 +252,19 @@ def cargarsistema(request, action):
             try:
                 form = RecursoForm(request.POST, request.FILES)
                 if form.is_valid():
-                    enlace, archivo = form.cleaned_data['enlace'], request.FILES['archivo']
+                    enlace, tipo = form.cleaned_data['enlace'], form.cleaned_data['tipo']
+                    archivo = None
+                    if request.FILES:
+                        archivo = request.FILES['archivo']
+                    if Recurso.objects.filter(status=True, enlace=enlace).exists():
+                        messages.error(request, f'Enlace de recurso ya existe.')
+                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    if Recurso.objects.filter(status=True, archivo=archivo).exists():
+                        messages.error(request, f'Archivo de recurso ya existe.')
+                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    if not tipo:
+                        messages.error(request, f'Debe seleccionar el tipo de recurso.')
+                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
                     if not enlace and not archivo:
                         messages.error(request, f'Debe ingresar enlace o el archivo del recurso.')
                         return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
@@ -281,6 +293,11 @@ def cargarsistema(request, action):
                 recurso=Recurso.objects.get(id=id)
                 form = RecursoForm(request.POST, instance=recurso)
                 if form.is_valid():
+                    if Recurso.objects.filter(status=True, enlace=form.cleaned_data['enlace']).exclude(id=id).exists():
+                        messages.error(request, f'Enlace de recurso ya existe.')
+                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    if Recurso.objects.filter(status=True, archivo=form.cleaned_data['archivo']).exclude(id=id).exists():
+                        messages.error(request, f'Archivo de recurso ya existe.')
                     recurso.titulo=form.cleaned_data['titulo']
                     recurso.descripcion=form.cleaned_data['descripcion']
                     recurso.tipo=form.cleaned_data['tipo']
