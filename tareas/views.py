@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django.forms import model_to_dict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
@@ -138,6 +140,24 @@ def cargarsistema(request, action):
                             newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
                             instance.picture = newfile
                         instance.save(request)
+                    else:
+                        instance = Persona.objects.get(user=request.user)
+                        instance.nombres=form.cleaned_data['nombres']
+                        instance.apellido1=form.cleaned_data['apellido1']
+                        instance.apellido2=form.cleaned_data['apellido2']
+                        instance.cedula=form.cleaned_data['cedula']
+                        instance.genero=form.cleaned_data['genero']
+                        instance.perfil=form.cleaned_data['perfil']
+                        instance.fecha_nacimiento=form.cleaned_data['fecha_nacimiento']
+                        instance.telefono=form.cleaned_data['telefono']
+                        instance.direccion=form.cleaned_data['direccion']
+                        instance.ciudad=form.cleaned_data['ciudad']
+                        instance.save(request)
+                        if 'picture' in request.FILES:
+                            newfile = request.FILES['picture']
+                            newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
+                            instance.picture = newfile
+                        instance.save(request)
                     return redirect('home')
                 else:
                     return render(request, 'actualizarperfil.html', {"form": form})
@@ -201,46 +221,65 @@ def cargarsistema(request, action):
         if action == 'addtarea':
             try:
                 form = TaskForm(request.POST)
+                idp=request.POST['idp']
                 if form.is_valid():
-                    instance = Task(curso=form.cleaned_data['curso'],
-                                               asignatura=form.cleaned_data['asignatura'],
-                                               profesor=form.cleaned_data['profesor'],)
+                    instance = Task(asignatura_id=idp,
+                                   title=form.cleaned_data['title'],
+                                   description=form.cleaned_data['description'],)
                     instance.save(request)
-                    return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+                    for recurso in form.cleaned_data['recursos']:
+                        instance.recursos.add(recurso)
+                    # Se construye la URL de la nueva vista con los parámetros
+                    url = reverse('sistema', kwargs={'action': 'tareas'}) + '?' + urlencode({'id': idp})
+                    # Se redirige al usuario a la nueva URL
+                    return redirect(url)
                 else:
-                    messages.error(request, [v[0] for k, v in form.errors.items()])
-                    return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
+                    return render(request, 'curso/modal/formtarea.html',
+                                  {"form": TaskForm(request.POST),
+                                   'idp': idp})
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
-                transaction.set_rollback(True)
-                messages.error(request, '')
-                return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
+                #transaction.rollback()
+                messages.error(request, str(ex))
+                return render(request, 'curso/modal/formtarea.html',
+                              {"error": "Error: {}".format(str(ex)), "form": TaskForm(request.POST),'idp':request.POST['id']})
+                # return redirect(reverse_lazy('sistema', kwargs={'action': f'addtarea?idp={request.POST["id"]}'}))
 
         if action == 'edittarea':
             try:
                 id = request.POST['id']
-                curso_a = CursoAsignatura.objects.get(id=id)
-                form = CursoAsignaturaForm(request.POST, instance=curso_a)
+                idp = request.POST['idp']
+                tarea = Task.objects.get(id=id)
+                form = TaskForm(request.POST, instance=tarea)
                 if form.is_valid():
-                    curso_a.curso = form.cleaned_data['curso']
-                    curso_a.asignatura = form.cleaned_data['asignatura']
-                    curso_a.profesor = form.cleaned_data['profesor']
-                    curso_a.save(request)
-                    curso_a.estudiantes.clear()
-                    for estuidante in form.cleaned_data['estudiantes']:
-                        curso_a.estudiantes.add(estuidante)
+                    tarea.title = form.cleaned_data['title']
+                    tarea.description = form.cleaned_data['description']
+                    tarea.save(request)
+                    tarea.recursos.clear()
+                    for recurso in form.cleaned_data['recursos']:
+                        tarea.recursos.add(recurso)
+                    url = reverse('sistema', kwargs={'action': 'tareas'}) + '?' + urlencode({'id': tarea.asignatura.id})
+                    # Se redirige al usuario a la nueva URL
+                    return redirect(url)
                 else:
-                    messages.error(request, [v[0] for k, v in form.errors.items()])
-                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+                    return render(request, 'curso/modal/formtarea.html',
+                                  {"form": TaskForm(request.POST),
+                                   'title': 'Editar Tare',
+                                   'id': id,
+                                   'idp': tarea.asignatura.id})
                 # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
-                transaction.set_rollback(True)
-                messages.error(request, 'Error por favor intentelo mas tarde')
-                return redirect(reverse_lazy('sistema', kwargs={'action': 'cursos'}))
+                # transaction.set_rollback(True)
+                messages.error(request, str(ex))
+                return render(request, 'curso/modal/formtarea.html',
+                              {"error": "Error: {}".format(str(ex)), "form": TaskForm(request.POST),
+                               'title': 'Editar Tare',
+                               'id': request.POST['id'],
+                               'idp': request.POST['idp']})
 
         if action == 'deltarea':
             try:
-                instancia = CursoAsignatura.objects.get(pk=request.POST['id'])
+                instancia = Task.objects.get(pk=request.POST['id'])
                 instancia.delete()
                 res_json = {"error": False}
             except Exception as ex:
@@ -337,7 +376,18 @@ def cargarsistema(request, action):
             # data['action'] = action = request.GET['action']
         data['persona'] = persona = Persona.objects.get(user=usuario)
         data['action'] = action
-        if action == 'cursos':
+
+        if action=='addpersona':
+            if not Persona.objects.filter(user=usuario).exists():
+                data['form'] = PersonaForm()
+                template = 'actualizarperfil.html'
+            else:
+                data['persona'] = persona=Persona.objects.get(user=usuario)
+                data['form'] = PersonaForm(initial=model_to_dict(persona))
+                template = 'actualizarperfil.html'
+            return render(request, template, data)
+
+        elif action == 'cursos':
             data['title'] = 'Cursos'
             search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
             if search:
@@ -398,7 +448,7 @@ def cargarsistema(request, action):
             except Exception as ex:
                 pass
 
-        if action == 'tareas':
+        elif action == 'tareas':
             data['title'] = 'Tareas'
             data['curso_a']=curso_a=CursoAsignatura.objects.get(id=request.GET['id'])
             search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), f'&id={curso_a.id}'
@@ -430,8 +480,6 @@ def cargarsistema(request, action):
             data['page'] = page
             data["url_vars"] = url_vars
             data['listado'] = page.object_list
-            data['totcount'] = listado.count()
-            request.session['viewactivo'] = 1
             return render(request, 'curso/viewtareas.html', data)
 
         elif action == 'addtarea':
@@ -445,6 +493,18 @@ def cargarsistema(request, action):
             except Exception as ex:
                 pass
 
+        elif action == 'edittarea':
+            try:
+                data['title'] = u'Editar Tarea'
+                data['idp']= idp = request.GET["idp"]
+                data['id']= id = request.GET["id"]
+                data['tarea'] = tarea = Task.objects.get(id=id)
+                form = TaskForm(initial=model_to_dict(tarea))
+                data['form'] = form
+                template = "curso/modal/formtarea.html"
+                return render(request, template, data)
+            except Exception as ex:
+                pass
         # Recursos
         if action == 'recursos':
             data['title'] = 'Recursos'

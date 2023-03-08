@@ -9,7 +9,7 @@ class CustomDateInput(DateTimeBaseInput):
     def format_value(self, value):
         return str(value or '')
 
-class FormModeloBase(forms.ModelForm):
+class Base(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.ver = kwargs.pop('ver') if 'ver' in kwargs else False
         self.editando = 'instance' in kwargs
@@ -17,7 +17,7 @@ class FormModeloBase(forms.ModelForm):
         requeridos = kwargs.pop('requeridos') if 'requeridos' in kwargs else []
         if self.editando:
             self.instancia = kwargs['instance']
-        super(FormModeloBase, self).__init__(*args, **kwargs)
+        super(Base, self).__init__(*args, **kwargs)
         for nr in no_requeridos:
             self.fields[nr].required = False
         for r in requeridos:
@@ -63,7 +63,7 @@ class LoginForm(AuthenticationForm):
         username=self.cleaned_data['username'].lower()
         return username
     
-class PersonaForm(FormModeloBase):
+class PersonaForm(Base):
     
     class Meta:
         model=Persona
@@ -85,7 +85,7 @@ class PersonaForm(FormModeloBase):
             'perfil': forms.Select(attrs={'class': 'form-control'}),
             }
 
-class CursoAsignaturaForm(FormModeloBase):
+class CursoAsignaturaForm(Base):
     
     class Meta:
         model=CursoAsignatura
@@ -103,22 +103,20 @@ class CursoAsignaturaForm(FormModeloBase):
             }
 
 
-class TaskForm(FormModeloBase):
+class TaskForm(Base):
     class Meta:
         model = Task
         fields = [
             "title",
             "description",
-            "profesor",
             "recursos",
         ]
         widgets = {
-            'profesor': forms.Select(attrs={'class': 'form-control'}),
             'recursos': forms.SelectMultiple(attrs={'class': 'form-control'}),
         }
 
 
-class RecursoForm(FormModeloBase):
+class RecursoForm(Base):
     class Meta:
         model = Recurso
         fields = [

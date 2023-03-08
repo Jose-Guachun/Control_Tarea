@@ -4,14 +4,15 @@
 {% block content%}
 <div class="card">
     <div class='card-body p-6'>
-        <h2> <i class="fa-solid fa-layer-group"></i> Adicionar Curso</h2>
+        <h2> <i class="fa-solid fa-list-check"></i> {{ title }}</h2>
                 {% for error in errors %}
                     <p class="alert alert-danger">{{ error }}</p>
                 {% endfor %}
             <form method="POST" enctype="multipart/form-data" id="updateForm">
                 {% csrf_token %}
 {#                <input type="hidden" name="action" value="{{action}}">#}
-                <input type="hidden" name="id" value="{{ curso_a.id }}">
+                <input type="hidden" name="idp" value="{{ idp }}">
+                <input type="hidden" name="id" value="{{ id }}">
                 <div class="row">
                     {% for field in form %}
                     <div class="mb-2 col-12 col-md-6">
@@ -34,7 +35,7 @@
                     <ul>
                         <li>
                             <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Guardar</button>
-                            <a class="btn btn-danger" href="{% url 'sistema' 'cursos' %}"><i class="fa fa-close"></i> Cancelar</a>
+                            <a class="btn btn-danger" href="{% url 'sistema' 'tareas' %}?id={{ idp }}"><i class="fa fa-close"></i> Cancelar</a>
                         </li>
                     </ul>
                 </div>

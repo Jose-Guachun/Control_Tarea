@@ -120,7 +120,7 @@ class Task(ModeloBase):
     title = models.CharField(default='', max_length=100, verbose_name=u'Título')
     description = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
     important = models.BooleanField(default=False)
-    profesor = models.ForeignKey(Persona, blank=True, null=True, on_delete=models.CASCADE)
+    archivo_qr = models.FileField(upload_to='ImageQR', blank=True, null=True, verbose_name=u'Archivo')
 
     def __str__(self):
-        return f'{self.title} - {self.profesor}'
+        return f'{self.title}'
