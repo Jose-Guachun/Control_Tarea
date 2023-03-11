@@ -1,20 +1,24 @@
 {% extends "base_sidebar.html" %}
 {% load static %}
 {% block title %}Cursos{% endblock %}
-{% block content%}
+{% block content %}
 
     <div class="row ps-2">
-        <h1><a href="{% url 'home' %}" title="Atras" data-bs-toggle="tooltip"><i class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-layer-group"></i> {{title}}</h1>
-    </div>
-    <div class="row ps-2">
-        <div class="col-12 pb-3">
-            <a href="{% url 'sistema' 'addcurso' %}" class="btn btn-success"><i class="fa fa-plus-circle"></i> Crear</a>
-        </div>
+        <h1><a href="{% url 'home' %}" title="Atras" data-bs-toggle="tooltip"><i
+                class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-layer-group"></i> {{ title }}
+        </h1>
     </div>
     <div class="card">
-        <div class='card-body border-top border-3 rounded-3 border-primary'>
-            <table class='table table-bordered table-striped tabla_responsive'>
-                <thead class="table-light">
+        <div class='card-body border-top rounded-3'>
+            <div class="row ps-2">
+                <div class="col-12 pb-3">
+                    <a href="{% url 'sistema' 'addcurso' %}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i>
+                        Crear</a>
+                </div>
+            </div>
+        <div class="table-responsive">
+             <table class='table table-bordered rounded-3'>
+                <thead class="table-dark">
                 <tr>
                     <th class="text-center fs-3">N</th>
                     <th class="text-center fs-3">Curso</th>
@@ -31,10 +35,10 @@
                             {{ forloop.counter }}
                         </td>
                         <td class="text-center">
-                           {{ list.curso }}
+                            {{ list.curso }}
                         </td>
                         <td class="text-center">
-                           {{ list.asignatura }}
+                            {{ list.asignatura }}
                         </td>
                         <td class="text-center">
                             {{ list.profesor }}
@@ -42,36 +46,43 @@
                         <td class="text-left">
                             <ul>
                                 {% for estudiante in list.estudiantes.all %}
-                                    <li><i class="fa-solid fa-arrow-circle-right"></i> {{ estudiante.nombre_simple }}</li>
+                                    <li><i class="fa-solid fa-arrow-circle-right"></i> {{ estudiante.nombre_simple }}
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </td>
-                        <td class="text-center w-5">
-                           <div class="dropdown">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Acciones <i class="fa fa-angle-down"></i>
+                        <td class="text-center w-5 align-middle">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-secondary dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-cogs"></i> <i class="fa fa-angle-down"></i>
                                 </button>
                                 <ul class="dropdown-menu pull-right fs-3" x-placement="right-start">
                                     <li>
-                                        <a href="{% url 'sistema' 'editcurso' %}?id={{ list.id }}" class="dropdown-item"><span class="fa fa-edit"></span> Editar</a>
+                                        <a href="{% url 'sistema' 'editcurso' %}?id={{ list.id }}"
+                                           class="dropdown-item"><span class="fa fa-edit"></span> Editar</a>
                                     </li>
-                                     <li>
-                                        <a href="{% url 'sistema' 'tareas' %}?id={{ list.id }}" class="dropdown-item"><span class="fa fa-list-check"></span> Tareas</a>
+                                    <li>
+                                        <a href="{% url 'sistema' 'tareas' %}?id={{ list.id }}"
+                                           class="dropdown-item"><span class="fa fa-list-check"></span> Tareas</a>
                                     </li>
-                                      <li>
-                                        <a href="javascript:void(0);" onclick="eliminarajax('{{ list.id }}', '{{ list }}','delcurso')" class="dropdown-item"><span class="fa fa-trash"></span> Eliminar</a>
+                                    <li>
+                                        <a href="javascript:void(0);"
+                                           onclick="eliminarajax('{{ list.id }}', '{{ list }}','delcurso')"
+                                           class="dropdown-item"><span class="fa fa-trash"></span> Eliminar</a>
                                     </li>
                                 </ul>
                             </div>
                         </td>
                     </tr>
-                    {% empty %}
+                {% empty %}
                     <tr>
                         <td colspan="15" class="text-center">NO EXISTEN REGISTROS</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
             {% include 'paginacion.html' %}
         </div>
     </div>

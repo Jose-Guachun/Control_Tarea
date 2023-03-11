@@ -18,12 +18,6 @@ PERFIL_USUARIO = (
     (3, 'Administrativo'),
 )
 
-TIPO_RECURSO = (
-    (1, 'Video'),
-    (2, 'Documento'),
-    (3, 'Enlace'),
-)
-
 
 class Persona(ModeloBase):
     user = models.OneToOneField(User, on_delete=models.CASCADE, )
@@ -56,7 +50,6 @@ class Curso(ModeloBase):
     nombre = models.CharField(default='', verbose_name=u'Nombre de la curso', max_length=250)
     paralelo = models.CharField(default='', verbose_name=u'Paralelo', max_length=250)
     descripcion = models.TextField(verbose_name=u'descripcion')
-    cupo = models.IntegerField(default=0, verbose_name=u'Cupo')
     cerrado = models.BooleanField(default=False, verbose_name=u"Cerrado")
 
     def __str__(self):
@@ -94,8 +87,7 @@ class CursoAsignatura(ModeloBase):
     asignatura = models.ForeignKey(Asignatura, verbose_name=u'Asignatura', on_delete=models.CASCADE)
     profesor = models.ForeignKey(Persona, verbose_name=u'Profesor', on_delete=models.CASCADE, null=True)
     cerrada = models.BooleanField(default=False, verbose_name=u'Cerrado')
-    estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en la asignatura',
-                                         related_name='+')
+    estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en la asignatura',related_name='+')
 
     def __str__(self):
         return u'%s - %s' % (self.curso, self.asignatura)
@@ -106,7 +98,6 @@ class CursoAsignatura(ModeloBase):
 class Recurso(ModeloBase):
     titulo = models.CharField(max_length=200)
     descripcion = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
-    tipo = models.IntegerField(choices=TIPO_RECURSO, default=1, verbose_name='Tipo de recurso', null=True, blank=True)
     enlace = models.CharField(default='', max_length=5000, verbose_name=u'Enlace')
     archivo = models.FileField(upload_to='Recursos', blank=True, null=True, verbose_name=u'Archivo')
 
@@ -120,7 +111,8 @@ class Task(ModeloBase):
     title = models.CharField(default='', max_length=100, verbose_name=u'Título')
     description = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
     important = models.BooleanField(default=False)
-    archivo_qr = models.FileField(upload_to='ImageQR', blank=True, null=True, verbose_name=u'Archivo')
+    archivo_qr = models.FileField(upload_to='ImageQR', blank=True, null=True, verbose_name=u'ImagenQR')
+    archivo = models.FileField(upload_to='Archivo_Doc', blank=True, null=True, verbose_name=u'Documento de tarea')
 
     def __str__(self):
         return f'{self.title}'

@@ -16,9 +16,16 @@
                 <div class="row">
                     {% for field in form %}
                     <div class="mb-2 col-12 col-md-6">
-                        <label for="" class="ms-1 mb-1">{{ field.label }} :</label>
+                        <label for="id_{{ field.name }}" class="ms-1 mb-1">{{ field.label }} :</label>
                         <div>
-                            {{field}}
+                             {% if field.name == 'archivo' %}
+                                <input type="file" name="{{ field.name }}" data-default-file="/media/{{ tarea.archivo }}" value="/media/{{ tarea.archivo }}" class="form-control" id="id_{{ field.name }}">
+                                {% if tarea.archivo %}
+                                    <a href="/media/{{ tarea.archivo }}" target="_blank" title="/media/{{ tarea.archivo }}" class="text-secondary"><i class="fa fa-download"></i> Descargar documento</a>
+                                {% endif %}
+                            {% else %}
+                                {{field}}
+                            {% endif %}
                         </div>
                         {% if field.errors %}
                         <small class="text-danger ms-1">

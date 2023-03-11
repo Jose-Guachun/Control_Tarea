@@ -27,7 +27,6 @@ urlpatterns = [
         name='login',
     ),
     path('s/<slug:action>/', views.cargarsistema, name='sistema'),
-    path('s/<slug:action>/', views.cargarsistema, name='sistema'),
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
     path('signup/', views.signup, name='signup'),

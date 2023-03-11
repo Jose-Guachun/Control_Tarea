@@ -12,19 +12,26 @@
                 <li>
                     <a href="{% url 'home'%}"><i class="zmdi zmdi-home"></i> <span>Inicio</span></a>
                 </li>
+                {% if persona.perfil == 1 %}
+                    <li>
+                        <a href="{% url 'sistema' 'tareasestudiante' %}"><i class="fa-solid fa-book"></i> <span>Tareas</span> </a>
+                    </li>
+                {% endif %}
                 {% if persona.perfil == 2 %}
                     <li>
                         <a href="{% url 'sistema' 'cursos' %}"><i class="fa-solid fa-layer-group"></i> <span>Cursos</span> </a>
                     </li>
-                {% endif %}
-                <li>
-                    <a href=""><i class="zmdi zmdi-view-dashboard"></i> <span>
-                            Dashboard</span></a>
+                    <li>
+                        <a href="{% url 'sistema' 'recursos' %}"><i class="fa-solid fa-file-lines"></i> <span>Recursos</span> </a>
+                    </li>
+                     <li>
+                        <a href=""><i class="zmdi zmdi-view-dashboard"></i> <span>
+                                Dashboard</span></a>
 
-                </li>
-                <li>
-                    <a href="{% url 'sistema' 'recursos' %}"><i class="fa-solid fa-file-lines"></i> <span>Recursos</span> </a>
-                </li>
+                    </li>
+                {% endif %}
+
+
 
                
             </ul>

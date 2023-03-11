@@ -239,9 +239,14 @@ def cargarsistema(request, action):
                 form = TaskForm(request.POST)
                 idp=request.POST['idp']
                 if form.is_valid():
+                    archivo = None
+                    if request.FILES:
+                        archivo = request.FILES['archivo']
                     instance = Task(asignatura_id=idp,
                                    title=form.cleaned_data['title'],
-                                   description=form.cleaned_data['description'],)
+                                   description=form.cleaned_data['description'],
+                                   archivo=archivo,
+                                    )
                     instance.save(request)
                     for recurso in form.cleaned_data['recursos']:
                         instance.recursos.add(recurso)
@@ -268,6 +273,8 @@ def cargarsistema(request, action):
                 tarea = Task.objects.get(id=id)
                 form = TaskForm(request.POST, instance=tarea)
                 if form.is_valid():
+                    if request.FILES:
+                        tarea .archivo = request.FILES['archivo']
                     tarea.title = form.cleaned_data['title']
                     tarea.description = form.cleaned_data['description']
                     tarea.save(request)
@@ -307,7 +314,7 @@ def cargarsistema(request, action):
             try:
                 form = RecursoForm(request.POST, request.FILES)
                 if form.is_valid():
-                    enlace, tipo = form.cleaned_data['enlace'], form.cleaned_data['tipo']
+                    enlace = form.cleaned_data['enlace']
                     archivo = None
                     if request.FILES:
                         archivo = request.FILES['archivo']
@@ -317,15 +324,11 @@ def cargarsistema(request, action):
                     if Recurso.objects.filter(status=True, archivo=archivo).exists():
                         messages.error(request, f'Archivo de recurso ya existe.')
                         return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
-                    if not tipo:
-                        messages.error(request, f'Debe seleccionar el tipo de recurso.')
-                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
                     if not enlace and not archivo:
                         messages.error(request, f'Debe ingresar enlace o el archivo del recurso.')
                         return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
                     instance = Recurso(titulo=form.cleaned_data['titulo'],
                                                descripcion=form.cleaned_data['descripcion'],
-                                               tipo=form.cleaned_data['tipo'],
                                                enlace=enlace,
                                                archivo = archivo
                     )
@@ -355,7 +358,6 @@ def cargarsistema(request, action):
                         messages.error(request, f'Archivo de recurso ya existe.')
                     recurso.titulo=form.cleaned_data['titulo']
                     recurso.descripcion=form.cleaned_data['descripcion']
-                    recurso.tipo=form.cleaned_data['tipo']
                     recurso.enlace=form.cleaned_data['enlace']
                     recurso.archivo=form.cleaned_data['archivo']
                     recurso.save(request)
@@ -583,6 +585,41 @@ def cargarsistema(request, action):
             except Exception as ex:
                 pass
 
+        elif action == 'tareasestudiante':
+            try:
+                data['title'] = 'Tareas Asignadas'
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, asignatura__estudiantes=persona), f''
+                if search:
+                    filtro = filtro & Q(nombre__icontains=search)
+                    url_vars += '&s=' + search
+                    data['search'] = search
+                listado =Task.objects.filter(filtro).order_by('-id')
+                paging = MiPaginador(listado, 20)
+                p = 1
+                try:
+                    paginasesion = 1
+                    if 'paginador' in request.session:
+                        paginasesion = int(request.session['paginador'])
+                    if 'page' in request.GET:
+                        p = int(request.GET['page'])
+                    else:
+                        p = paginasesion
+                    try:
+                        page = paging.page(p)
+                    except:
+                        p = 1
+                    page = paging.page(p)
+                except:
+                    page = paging.page(p)
+                request.session['paginador'] = p
+                data['paging'] = paging
+                data['rangospaging'] = paging.rangos_paginado(p)
+                data['page'] = page
+                data["url_vars"] = url_vars
+                data['listado'] = page.object_list
+                return render(request, 'curso/viewtareasestudiante.html', data)
+            except Exception as ex:
+                pass
         else:
             template = 'home.html'
             return render(request, template, data)

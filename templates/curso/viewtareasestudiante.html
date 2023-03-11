@@ -4,15 +4,15 @@
 {% block content%}
 
     <div class="row ps-2">
-        <h1><a href="{% url 'sistema' 'cursos' %}" title="Atras" data-bs-toggle="tooltip"><i class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-list-check"></i> {{title}} <span class="fs-3">| {{ curso_a }}</span></h1>
+        <h1><a href="{% url 'home' %}" title="Atras" data-bs-toggle="tooltip"><i class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-list-check"></i> {{title}} <span class="fs-3"> {{ curso_a }}</span></h1>
     </div>
     <div class="card">
         <div class='card-body border-top rounded-3 '>
-            <div class="row ps-2">
-                <div class="col-12 pb-3">
-                    <a href="{% url 'sistema' 'addtarea' %}?idp={{ curso_a.id }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Crear</a>
-                </div>
-            </div>
+{#            <div class="row ps-2">#}
+{#                <div class="col-12 pb-3">#}
+{#                    <a href="{% url 'sistema' 'addtarea' %}?idp={{ curso_a.id }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Crear</a>#}
+{#                </div>#}
+{#            </div>#}
             <div class="table-responsive">
                 <table class='table table-bordered table-hover'>
                     <thead class="table-dark">

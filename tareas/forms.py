@@ -110,6 +110,7 @@ class TaskForm(Base):
             "title",
             "description",
             "recursos",
+            "archivo",
         ]
         widgets = {
             'recursos': forms.SelectMultiple(attrs={'class': 'form-control'}),
@@ -122,14 +123,12 @@ class RecursoForm(Base):
         fields = [
             "titulo",
             "descripcion",
-            "tipo",
             "enlace",
             "archivo",
         ]
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.TextInput(attrs={'class': 'form-control'}),
-            'tipo': forms.Select(attrs={'class': 'form-control'}),
             'enlace': forms.TextInput(attrs={'class': 'form-control no_requeridos'}),
             'archivo': forms.FileInput(attrs={'class': 'form-control no_requeridos'}),
         }
