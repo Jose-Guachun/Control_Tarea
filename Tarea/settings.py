@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'db_asignaciontarea', 
         'HOST': 'localhost',
         'USER': 'postgres',
-        'PASSWORD': '1234',
+        'PASSWORD': '0927',
         'PORT': '5432',
     }
 }

@@ -112,6 +112,7 @@ class Task(ModeloBase):
     description = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
     important = models.BooleanField(default=False)
     archivo_qr = models.FileField(upload_to='ImageQR', blank=True, null=True, verbose_name=u'ImagenQR')
+    # codigo_qr = models.FileField(upload_to='Codigo_QR', blank=True, null=True, verbose_name=u'Código QR')
     archivo = models.FileField(upload_to='Archivo_Doc', blank=True, null=True, verbose_name=u'Documento de tarea')
 
     def __str__(self):

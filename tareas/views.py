@@ -1,5 +1,5 @@
+import os.path
 from urllib.parse import urlencode
-
 from django.forms import model_to_dict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
@@ -20,6 +20,9 @@ from django.contrib import messages
 from .models import *
 from .forms import TaskForm
 from Tarea.funciones import MiPaginador, generar_nombre
+from Tarea.settings import DEBUG, BASE_DIR
+import pyqrcode
+from datetime import datetime
 
 
 def signup(request):
@@ -115,6 +118,10 @@ def cargarsistema(request, action):
     data = {}
     usuario = request.user
     persona = Persona.objects.filter(user=usuario)
+    if DEBUG:
+        DOMINIO_SISTEMA = 'http://localhost:8000/'
+    else:
+        DOMINIO_SISTEMA = None
     if request.method == 'POST':
         action = request.POST.get('action',action)
         if action == 'addpersona':
@@ -250,6 +257,23 @@ def cargarsistema(request, action):
                     instance.save(request)
                     for recurso in form.cleaned_data['recursos']:
                         instance.recursos.add(recurso)
+                    # Generar codigo QR
+                    nombre_qr = 'qr' + str(instance.id) + '.png'
+                    carpeta_qr = 'ImageQR'
+                    directorio = os.path.join(os.path.join(BASE_DIR, 'media', carpeta_qr))
+                    ruta_qr = directorio + '\\' + nombre_qr
+                    try:
+                        os.stat(directorio)
+                    except:
+                        os.mkdir(directorio)
+                    if os.path.isfile(ruta_qr):
+                        os.remove(ruta_qr)
+                    version = datetime.now().strftime('%Y%m%d_%H%M%S%f')
+                    qr_url = pyqrcode.create(f'{DOMINIO_SISTEMA}media/{carpeta_qr}/{nombre_qr}?v={version}')
+                    qr_png = qr_url.png(ruta_qr, 16, '#000000')
+                    instance.archivo_qr = f'{carpeta_qr}/{nombre_qr}'
+                    instance.save(request)
+                    # Generar codigo QR
                     # Se construye la URL de la nueva vista con los parámetros
                     url = reverse('sistema', kwargs={'action': 'tareas'}) + '?' + urlencode({'id': idp})
                     # Se redirige al usuario a la nueva URL
@@ -623,3 +647,6 @@ def cargarsistema(request, action):
         else:
             template = 'home.html'
             return render(request, template, data)
+
+def generar_qr(request, tarea):
+    pass

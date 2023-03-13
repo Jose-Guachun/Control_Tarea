@@ -32,10 +32,10 @@
                             <td class="text-center w-5">
                                 {{ forloop.counter }}
                             </td>
-                            <td class="text-center w-20">
+                            <td class="text-center w-15">
                                 {{ list.title }}
                             </td>
-                            <td class="text-center w-30">
+                            <td class="text-center w-25">
                                 {{ list.description }}
                             </td>
                             <td class="text-left w-20">
@@ -59,10 +59,12 @@
                                        class="btn btn-success btn-mini tu"><i class="fa fa-eye"></i></a>
                                 {% endif %}
                             </td>
-                            <td class="text-center w-10">
+                            <td class="text-center w-20">
                                 {% if list.archivo_qr %}
-                                    <a target="_blank" title="" href="{{ list.archivo.url }}"
-                                       class="btn btn-success btn-mini tu"><i class="fa fa-eye"></i></a>
+                                    <a target="_blank" title="Código QR" href="{{ list.archivo_qr.url }}"
+                                       class="">
+                                        <img src="{{ list.archivo_qr.url }}" alt="Código QR" width="100" height="100">
+                                    </a>
                                 {% endif %}
                             </td>
                             <td class="text-center w-5">
