@@ -88,7 +88,7 @@ class CursoAsignatura(ModeloBase):
     asignatura = models.ForeignKey(Asignatura, verbose_name=u'Asignatura', on_delete=models.CASCADE)
     profesor = models.ForeignKey(Persona, verbose_name=u'Profesor', on_delete=models.CASCADE, null=True)
     cerrada = models.BooleanField(default=False, verbose_name=u'Cerrado')
-    estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en la asignatura',related_name='+')
+    # estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en la asignatura',related_name='+')
 
     def tareas(self):
         return self.task_set.filter(status=True)

@@ -124,10 +124,10 @@ def cargarsistema(request, action):
     else:
         DOMINIO_SISTEMA = None
     estudiantes_id=[]
-    cursos=CursoAsignatura.objects.filter(status=True, cerrada=False)
-    for curso in cursos:
-        for estudiante in curso.estudiantes.all():
-            estudiantes_id.append(estudiante.id)
+    # cursos=CursoAsignatura.objects.filter(status=True, cerrada=False)
+    # for curso in cursos:
+    #     for estudiante in curso.estudiantes.all():
+    #         estudiantes_id.append(estudiante.id)
     if request.method == 'POST':
         action = request.POST.get('action',action)
         if action == 'addpersona':
@@ -181,14 +181,14 @@ def cargarsistema(request, action):
 
         if action == 'addcurso':
             try:
-                form = CursoAsignaturaForm(request.POST)
-                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form = CursoForm(request.POST)
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
                 form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 if form.is_valid():
-                    instance = CursoAsignatura(curso=form.cleaned_data['curso'],
-                                               asignatura=form.cleaned_data['asignatura'],
-                                               profesor=form.cleaned_data['profesor'],
-                                               )
+                    instance = Curso(nombre=form.cleaned_data['nombre'],
+                                   paralelo=form.cleaned_data['paralelo'],
+                                   descripcion=form.cleaned_data['descripcion'],
+                                   )
                     instance.save(request)
                     for estuidante in form.cleaned_data['estudiantes']:
                         instance.estudiantes.add(estuidante)
@@ -199,8 +199,8 @@ def cargarsistema(request, action):
                     # return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
-                form = CursoAsignaturaForm(request.POST)
-                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form = CursoForm(request.POST)
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
                 form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 transaction.set_rollback(True)
                 messages.error(request, str(ex))
@@ -210,14 +210,14 @@ def cargarsistema(request, action):
         if action == 'editcurso':
             try:
                 id=request.POST['id']
-                curso_a=CursoAsignatura.objects.get(id=id)
-                form = CursoAsignaturaForm(request.POST, instance=curso_a)
-                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                curso_a=Curso.objects.get(id=id)
+                form = CursoForm(request.POST, instance=curso_a)
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
                 form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 if form.is_valid():
-                    curso_a.curso=form.cleaned_data['curso']
-                    curso_a.asignatura=form.cleaned_data['asignatura']
-                    curso_a.profesor=form.cleaned_data['profesor']
+                    curso_a.nombre=form.cleaned_data['nombre']
+                    curso_a.paralelo=form.cleaned_data['paralelo']
+                    curso_a.descripcion=form.cleaned_data['descripcion']
                     curso_a.save(request)
                     curso_a.estudiantes.clear()
                     for estuidante in form.cleaned_data['estudiantes']:
@@ -229,16 +229,81 @@ def cargarsistema(request, action):
 
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
-                data['form'] = form = CursoAsignaturaForm(request.POST)
+                data['form'] = form = CursoForm(request.POST)
                 data['id'] = request.POST['id']
-                data['curso_a'] = curso_a = CursoAsignatura.objects.get(id=request.POST['id'])
-                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                data['curso_a'] = curso_a = Curso.objects.get(id=request.POST['id'])
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
                 form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 transaction.set_rollback(True)
                 messages.error(request, str(ex))
                 return render(request, 'curso/modal/formcurso.html',data)
 
         if action == 'delcurso':
+            try:
+                instancia = Curso.objects.get(pk=request.POST['id'])
+                instancia.delete()
+                res_json = {"error": False}
+            except Exception as ex:
+                res_json = {'error': True, "message": "Error: {}".format(ex)}
+            return JsonResponse(res_json, safe=False)
+
+        if action == 'addasignatura':
+            try:
+                idp=request.POST['idp']
+                form = CursoAsignaturaForm(request.POST)
+                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                # form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                if form.is_valid():
+                    instance = CursoAsignatura(curso_id=idp,
+                                               asignatura=form.cleaned_data['asignatura'],
+                                               profesor=form.cleaned_data['profesor'],
+                                               )
+                    instance.save(request)
+                    url = reverse('sistema', kwargs={'action': 'asignaturas'}) + '?' + urlencode({'id': idp})
+                    return redirect(url)
+                else:
+                    return render(request, 'curso/modal/formcurso.html',
+                                  {"form": form,  "errors": [{v[0]} for k, v in form.errors.items()]})
+                    # return redirect(reverse_lazy('sistema', kwargs={'action': 'addcurso'}))
+                    # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
+            except Exception as ex:
+                form = CursoAsignaturaForm(request.POST)
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                # form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                transaction.set_rollback(True)
+                messages.error(request, str(ex))
+                return render(request, 'curso/modal/formcurso.html',
+                              {"form": form})
+
+        if action == 'editasignatura':
+            try:
+                id=request.POST['id']
+                curso_a=CursoAsignatura.objects.get(id=id)
+                form = CursoAsignaturaForm(request.POST, instance=curso_a)
+                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                # form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                if form.is_valid():
+                    curso_a.asignatura=form.cleaned_data['asignatura']
+                    curso_a.profesor=form.cleaned_data['profesor']
+                    curso_a.save(request)
+                    url = reverse('sistema', kwargs={'action': 'asignaturas'}) + '?' + urlencode({'id': curso_a.curso.id})
+                    return redirect(url)
+                else:
+                    return render(request, 'curso/modal/formcurso.html',
+                                  {"form": form,'id':request.POST['id'],'curso_a':curso_a, "errors": [{v[0]} for k, v in form.errors.items()]})
+
+                    # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
+            except Exception as ex:
+                data['form'] = form = CursoAsignaturaForm(request.POST)
+                data['id'] = request.POST['id']
+                data['curso_a'] = curso_a = CursoAsignatura.objects.get(id=request.POST['id'])
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                # form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                transaction.set_rollback(True)
+                messages.error(request, str(ex))
+                return render(request, 'curso/modal/formcurso.html',data)
+
+        if action == 'delasignatura':
             try:
                 instancia = CursoAsignatura.objects.get(pk=request.POST['id'])
                 instancia.delete()
@@ -436,48 +501,51 @@ def cargarsistema(request, action):
             return render(request, template, data)
 
         elif action == 'cursos':
-            data['title'] = 'Cursos'
-            search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
-            if search:
-                filtro = filtro & Q(nombre__icontains=search)
-                url_vars += '&s=' + search
-                data['search'] = search
-            listado = CursoAsignatura.objects.filter(filtro).order_by('-id')
-            paging = MiPaginador(listado, 20)
-            p = 1
             try:
-                paginasesion = 1
-                if 'paginador' in request.session:
-                    paginasesion = int(request.session['paginador'])
-                if 'page' in request.GET:
-                    p = int(request.GET['page'])
-                else:
-                    p = paginasesion
+                data['title'] = 'Cursos'
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
+                if search:
+                    filtro = filtro & Q(nombre__icontains=search)
+                    url_vars += '&s=' + search
+                    data['search'] = search
+                listado = Curso.objects.filter(filtro).order_by('-id')
+                paging = MiPaginador(listado, 20)
+                p = 1
                 try:
+                    paginasesion = 1
+                    if 'paginador' in request.session:
+                        paginasesion = int(request.session['paginador'])
+                    if 'page' in request.GET:
+                        p = int(request.GET['page'])
+                    else:
+                        p = paginasesion
+                    try:
+                        page = paging.page(p)
+                    except:
+                        p = 1
                     page = paging.page(p)
                 except:
-                    p = 1
-                page = paging.page(p)
-            except:
-                page = paging.page(p)
-            request.session['paginador'] = p
-            data['paging'] = paging
-            data['rangospaging'] = paging.rangos_paginado(p)
-            data['page'] = page
-            data["url_vars"] = url_vars
-            data['listado'] = page.object_list
-            data['totcount'] = listado.count()
-            request.session['viewactivo'] = 1
-            return render(request, 'curso/view.html', data)
+                    page = paging.page(p)
+                request.session['paginador'] = p
+                data['paging'] = paging
+                data['rangospaging'] = paging.rangos_paginado(p)
+                data['page'] = page
+                data["url_vars"] = url_vars
+                data['listado'] = page.object_list
+                data['totcount'] = listado.count()
+                request.session['viewactivo'] = 1
+                return render(request, 'curso/viewcurso.html', data)
+            except Exception as ex:
+                pass
 
         elif action == 'addcurso':
             try:
                 data['title'] = u'Adicionar Curso'
-                form = CursoAsignaturaForm()
-                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form = CursoForm()
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
                 form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude(id__in=estudiantes_id)
                 data['form'] = form
-                template = "curso/modal/formcurso.html"
+                template = "curso/modal/formasignatura.html"
                 return render(request, template, data)
             except Exception as ex:
                 pass
@@ -486,10 +554,77 @@ def cargarsistema(request, action):
             try:
                 data['title'] = u'Adicionar Curso'
                 id=request.GET["id"]
+                data['curso_a']= curso_a =Curso.objects.get(id=id)
+                form = CursoForm(initial=model_to_dict(curso_a))
+                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                data['form'] = form
+                template = "curso/modal/formcurso.html"
+                return render(request, template, data)
+            except Exception as ex:
+                pass
+
+        elif action == 'asignaturas':
+            try:
+                id=request.GET['id']
+                data['curso']=Curso.objects.get(id=id)
+                data['title'] = 'Asignaturas'
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, curso_id=id), ''
+                if search:
+                    filtro = filtro & Q(nombre__icontains=search)
+                    url_vars += '&s=' + search
+                    data['search'] = search
+                listado = CursoAsignatura.objects.filter(filtro).order_by('-id')
+                paging = MiPaginador(listado, 20)
+                p = 1
+                try:
+                    paginasesion = 1
+                    if 'paginador' in request.session:
+                        paginasesion = int(request.session['paginador'])
+                    if 'page' in request.GET:
+                        p = int(request.GET['page'])
+                    else:
+                        p = paginasesion
+                    try:
+                        page = paging.page(p)
+                    except:
+                        p = 1
+                    page = paging.page(p)
+                except:
+                    page = paging.page(p)
+                request.session['paginador'] = p
+                data['paging'] = paging
+                data['rangospaging'] = paging.rangos_paginado(p)
+                data['page'] = page
+                data["url_vars"] = url_vars
+                data['listado'] = page.object_list
+                data['totcount'] = listado.count()
+                request.session['viewactivo'] = 1
+                return render(request, 'curso/view.html', data)
+            except Exception as ex:
+                pass
+
+        elif action == 'addasignatura':
+            try:
+                data['idp'] = id = request.GET['id']
+                data['curso'] = Curso.objects.get(id=id)
+                data['title'] = u'Adicionar asignatura'
+                form = CursoAsignaturaForm()
+                form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
+                data['form'] = form
+                template = "curso/modal/formasignatura.html"
+                return render(request, template, data)
+            except Exception as ex:
+                pass
+
+        elif action == 'editasignatura':
+            try:
+                data['title'] = u'Editar asignatura'
+                data['idp'] = request.GET['idp']
+                id=request.GET["id"]
                 data['curso_a']= curso_a =CursoAsignatura.objects.get(id=id)
                 form = CursoAsignaturaForm(initial=model_to_dict(curso_a))
                 form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
-                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
                 data['form'] = form
                 template = "curso/modal/formcurso.html"
                 return render(request, template, data)

@@ -24,7 +24,15 @@
                     <li>
                         <a href="{% url 'sistema' 'recursos' %}"><i class="fa-solid fa-file-lines"></i> <span>Recursos</span> </a>
                     </li>
-                     <li>
+
+                {% endif %}
+              {% if persona.perfil == 2 %}
+                    <li>
+                        <a href="{% url 'sistema' 'cursos' %}"><i class="fa-solid fa-layer-group"></i> <span>Cursos</span> </a>
+                    </li>
+                {% endif %}
+                {% if not persona.perfil == 1 %}
+                    <li>
                         <a href=""><i class="zmdi zmdi-view-dashboard"></i> <span>
                                 Dashboard</span></a>
 

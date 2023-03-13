@@ -90,19 +90,29 @@ class CursoAsignaturaForm(Base):
     class Meta:
         model=CursoAsignatura
         fields=[
-            "curso",
             "asignatura",
             "profesor",
+            ]
+        widgets = {
+            'asignatura': forms.Select(attrs={'class': 'form-control'}),
+            'profesor': forms.Select(attrs={'class': 'form-control'}),
+            }
+
+class CursoForm(Base):
+    class Meta:
+        model=Curso
+        fields=[
+            "nombre",
+            "paralelo",
+            "descripcion",
             "estudiantes",
             ]
         widgets = {
-            'curso': forms.Select(attrs={'class': 'form-control'}),
-            'asignatura': forms.Select(attrs={'class': 'form-control'}),
-            'profesor': forms.Select(attrs={'class': 'form-control'}),
+            # 'curso': forms.Select(attrs={'class': 'form-control'}),
+            # 'asignatura': forms.Select(attrs={'class': 'form-control'}),
+            # 'profesor': forms.Select(attrs={'class': 'form-control'}),
             'estudiantes': forms.SelectMultiple(attrs={'class': 'form-control'}),
             }
-
-
 class TaskForm(Base):
     class Meta:
         model = Task
