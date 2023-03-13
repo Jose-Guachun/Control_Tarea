@@ -1,5 +1,6 @@
 import os.path
 from urllib.parse import urlencode
+
 from django.forms import model_to_dict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
@@ -122,6 +123,11 @@ def cargarsistema(request, action):
         DOMINIO_SISTEMA = 'http://localhost:8000/'
     else:
         DOMINIO_SISTEMA = None
+    estudiantes_id=[]
+    cursos=CursoAsignatura.objects.filter(status=True, cerrada=False)
+    for curso in cursos:
+        for estudiante in curso.estudiantes.all():
+            estudiantes_id.append(estudiante.id)
     if request.method == 'POST':
         action = request.POST.get('action',action)
         if action == 'addpersona':
@@ -469,7 +475,7 @@ def cargarsistema(request, action):
                 data['title'] = u'Adicionar Curso'
                 form = CursoAsignaturaForm()
                 form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
-                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude(id__in=estudiantes_id)
                 data['form'] = form
                 template = "curso/modal/formcurso.html"
                 return render(request, template, data)
@@ -617,8 +623,9 @@ def cargarsistema(request, action):
                     filtro = filtro & Q(nombre__icontains=search)
                     url_vars += '&s=' + search
                     data['search'] = search
+                data['cursos']=CursoAsignatura.objects.filter(status=True, estudiantes=persona).order_by('-id')
                 listado =Task.objects.filter(filtro).order_by('-id')
-                paging = MiPaginador(listado, 20)
+                paging = MiPaginador(listado, 10)
                 p = 1
                 try:
                     paginasesion = 1

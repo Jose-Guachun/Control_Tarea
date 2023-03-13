@@ -1,65 +1,75 @@
 {% extends "base_sidebar.html" %}
 {% load static %}
-{% block title %}{{title}}{% endblock %}
-{% block content%}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
 
     <div class="row ps-2">
-        <h1><a href="{% url 'sistema' 'cursos' %}" title="Atras" data-bs-toggle="tooltip"><i class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-list-check"></i> {{title}} <span class="fs-3">| {{ curso_a }}</span></h1>
+        <h1><a href="{% url 'sistema' 'cursos' %}" title="Atras" data-bs-toggle="tooltip"><i
+                class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-list-check"></i> {{ title }}
+            <span>| {{ curso_a }}</span></h1>
     </div>
     <div class="card">
         <div class='card-body border-top rounded-3 '>
             <div class="row ps-2">
                 <div class="col-12 pb-3">
-                    <a href="{% url 'sistema' 'addtarea' %}?idp={{ curso_a.id }}" class="btn btn-outline-success"><i class="fa fa-plus-circle"></i> Crear</a>
+                    <a href="{% url 'sistema' 'addtarea' %}?idp={{ curso_a.id }}" class="btn btn-outline-success"><i
+                            class="fa fa-plus-circle"></i> Crear</a>
                 </div>
             </div>
             <div class="table-responsive">
                 <table class='table table-bordered table-hover'>
                     <thead class="table-dark">
-                    <tr>
-                        <th class="text-center fs-3">N</th>
-                        <th class="text-center fs-3">Tarea</th>
-                        <th class="text-center fs-3">Descripción</th>
-                        <th class="text-center fs-3">Recursos</th>
-                        <th class="text-center fs-3">Archivo</th>
-                        <th class="text-center fs-3">Codigo QR</th>
-                        <th class="text-center fs-3">Acciones</th>
-                    </tr>
+                        <tr>
+                            <th class="text-center fs-3">N</th>
+                            <th class="text-center fs-3">Tarea</th>
+                            <th class="text-center fs-3">Descripción</th>
+                            <th class="text-center fs-3">Recursos</th>
+                            <th class="text-center fs-3">Archivo</th>
+                            <th class="text-center fs-3">Codigo QR</th>
+                            <th class="text-center fs-3">Acciones</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% for list in listado %}
-                        <tr>
-                            <td class="text-center w-5">
-                                {{ forloop.counter }}
-                            </td>
-                            <td class="text-center w-15">
-                                {{ list.title }}
-                            </td>
-                            <td class="text-center w-25">
-                                {{ list.description }}
-                            </td>
-                            <td class="text-left w-20">
-                                <ul>
-                                    {% for recurso in list.recursos.all %}
-                                        <li><p><i class="fa-solid fa-arrow-circle-right"></i> {{ recurso }}
-                                            {% if recurso.archivo %}
-                                                <a href="{{ recurso.archivo.url }}" class="text-danger btn-mini tu ms-2 p-1" data-bs-toggle="tooltip" title="Documento de recurso" target="_blank"> <i class="fa-solid fa-file-pdf"></i></a>
-                                            {% endif %}
-                                            {% if recurso.enlace %}
-                                                <a href="{{ recurso.enlace }}" class="text-secondary btn-mini tu p-1" data-bs-toggle="tooltip" title="Enlace de vídeo" target="_blank"> <i class="fa fa-link"></i></a>
-                                            {% endif %}
-                                        </p>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </td>
-                            <td class="text-center w-5">
-                                {% if list.archivo %}
-                                    <a target="_blank" title="" href="{{ list.archivo.url }}"
-                                       class="btn btn-success btn-mini tu"><i class="fa fa-eye"></i></a>
-                                {% endif %}
-                            </td>
-                            <td class="text-center w-20">
+                        {% for list in listado %}
+                            <tr>
+                                <td class="text-center w-5">
+                                    {{ forloop.counter }}
+                                </td>
+                                <td class="text-center w-20">
+                                    {{ list.title }}
+                                </td>
+                                <td class="text-center w-30">
+                                    <p class="text-truncate">
+                                        {{ list.description|truncatechars:"80" }}
+                                    </p>
+                                </td>
+                                <td class="text-left w-20">
+                                    <ul>
+                                        {% for recurso in list.recursos.all %}
+                                            <li><p><i class="fa-solid fa-arrow-circle-right"></i> {{ recurso }}
+                                                {% if recurso.archivo %}
+                                                    <a href="{{ recurso.archivo.url }}"
+                                                       class="text-danger btn-mini tu ms-2 p-1" data-bs-toggle="tooltip"
+                                                       title="Documento de recurso" target="_blank"> <i
+                                                            class="fa-solid fa-file-pdf"></i></a>
+                                                {% endif %}
+                                                {% if recurso.enlace %}
+                                                    <a href="{{ recurso.enlace }}" class="text-secondary btn-mini tu p-1"
+                                                       data-bs-toggle="tooltip" title="Enlace de vídeo" target="_blank"> <i
+                                                            class="fa fa-link"></i></a>
+                                                {% endif %}
+                                            </p>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td class="text-center w-5">
+                                    {% if list.archivo %}
+                                        <a target="_blank" title="" href="{{ list.archivo.url }}"
+                                           class="btn btn-success btn-mini tu"><i class="fa fa-eye"></i></a>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center w-20">
                                 {% if list.archivo_qr %}
                                     <a target="_blank" title="Código QR" href="{{ list.archivo_qr.url }}"
                                        class="">
@@ -67,27 +77,31 @@
                                     </a>
                                 {% endif %}
                             </td>
-                            <td class="text-center w-5">
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-cogs"></i> <i class="fa fa-angle-down"></i>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right fs-3" x-placement="right-start">
-                                        <li>
-                                            <a href="{% url 'sistema' 'edittarea' %}?id={{ list.id }}&idp={{ curso_a.id }}" class="dropdown-item"><span class="fa fa-edit"></span> Editar</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" onclick="eliminarajax('{{ list.id }}', '{{ list }}','deltarea')" class="dropdown-item"><span class="fa fa-trash"></span> Eliminar</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="15" class="text-center">NO EXISTEN REGISTROS</td>
-                        </tr>
-                    {% endfor %}
+                                <td class="text-center w-5">
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-secondary dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-cogs"></i> <i class="fa fa-angle-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu pull-right fs-3" x-placement="right-start">
+                                            <li>
+                                                <a href="{% url 'sistema' 'edittarea' %}?id={{ list.id }}&idp={{ curso_a.id }}"
+                                                   class="dropdown-item"><span class="fa fa-edit"></span> Editar</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0);"
+                                                   onclick="eliminarajax('{{ list.id }}', '{{ list }}','deltarea')"
+                                                   class="dropdown-item"><span class="fa fa-trash"></span> Eliminar</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="15" class="text-center">NO EXISTEN REGISTROS</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
