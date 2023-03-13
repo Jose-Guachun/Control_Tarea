@@ -51,6 +51,7 @@ class Curso(ModeloBase):
     paralelo = models.CharField(default='', verbose_name=u'Paralelo', max_length=250)
     descripcion = models.TextField(verbose_name=u'descripcion')
     cerrado = models.BooleanField(default=False, verbose_name=u"Cerrado")
+    estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en el curso',related_name='+')
 
     def __str__(self):
         return u'%s' % self.nombre
@@ -88,6 +89,9 @@ class CursoAsignatura(ModeloBase):
     profesor = models.ForeignKey(Persona, verbose_name=u'Profesor', on_delete=models.CASCADE, null=True)
     cerrada = models.BooleanField(default=False, verbose_name=u'Cerrado')
     estudiantes = models.ManyToManyField(Persona, verbose_name=u'Estudiantes inscritos en la asignatura',related_name='+')
+
+    def tareas(self):
+        return self.task_set.filter(status=True)
 
     def __str__(self):
         return u'%s - %s' % (self.curso, self.asignatura)

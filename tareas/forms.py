@@ -108,11 +108,12 @@ class TaskForm(Base):
         model = Task
         fields = [
             "title",
-            "description",
             "recursos",
+            "description",
             "archivo",
         ]
         widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
             'recursos': forms.SelectMultiple(attrs={'class': 'form-control'}),
         }
 
