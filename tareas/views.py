@@ -753,12 +753,12 @@ def cargarsistema(request, action):
         elif action == 'tareasestudiante':
             try:
                 data['title'] = 'Tareas Asignadas'
-                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, asignatura__estudiantes=persona), f''
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, asignatura__curso__estudiantes=persona), f''
                 if search:
                     filtro = filtro & Q(nombre__icontains=search)
                     url_vars += '&s=' + search
                     data['search'] = search
-                data['cursos']=CursoAsignatura.objects.filter(status=True, estudiantes=persona).order_by('-id')
+                data['cursos']=CursoAsignatura.objects.filter(status=True, curso__estudiantes=persona).order_by('-id')
                 listado =Task.objects.filter(filtro).order_by('-id')
                 paging = MiPaginador(listado, 10)
                 p = 1
@@ -783,6 +783,51 @@ def cargarsistema(request, action):
                 data['page'] = page
                 data["url_vars"] = url_vars
                 data['listado'] = page.object_list
+                return render(request, 'curso/viewtareasestudiante.html', data)
+            except Exception as ex:
+                pass
+
+        elif action == 'cursosdocente':
+            try:
+                data['title'] = 'Asignaturas'
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True,profesor_id=persona.id), ''
+                if search:
+                    filtro = filtro & Q(nombre__icontains=search)
+                    url_vars += '&s=' + search
+                    data['search'] = search
+                listado = CursoAsignatura.objects.filter(filtro).order_by('-id')
+                paging = MiPaginador(listado, 20)
+                p = 1
+                try:
+                    paginasesion = 1
+                    if 'paginador' in request.session:
+                        paginasesion = int(request.session['paginador'])
+                    if 'page' in request.GET:
+                        p = int(request.GET['page'])
+                    else:
+                        p = paginasesion
+                    try:
+                        page = paging.page(p)
+                    except:
+                        p = 1
+                    page = paging.page(p)
+                except:
+                    page = paging.page(p)
+                request.session['paginador'] = p
+                data['paging'] = paging
+                data['rangospaging'] = paging.rangos_paginado(p)
+                data['page'] = page
+                data["url_vars"] = url_vars
+                data['listado'] = page.object_list
+                data['totcount'] = listado.count()
+                return render(request, 'curso/viewcursodocente.html', data)
+            except Exception as ex:
+                pass
+
+        elif action == 'tareadetail':
+            try:
+                data['title'] = 'Tarea'
+                listado =Task.objects.get(id=request.GET['id'])
                 return render(request, 'curso/viewtareasestudiante.html', data)
             except Exception as ex:
                 pass

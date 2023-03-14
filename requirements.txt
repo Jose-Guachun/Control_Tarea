@@ -14,3 +14,4 @@ sqlparse==0.4.3
 typing_extensions==4.4.0
 tzdata==2022.7
 Werkzeug==2.2.2
+pyqrcode == 1.2.1

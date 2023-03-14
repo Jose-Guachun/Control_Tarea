@@ -56,7 +56,7 @@ class Base(forms.ModelForm):
 class LoginForm(AuthenticationForm):
     class Meta:
         model = User
-        fields = ["username", "password"]
+        fields = ["username","email", "password"]
 
     def clean_username(self):
         #username must be unique.

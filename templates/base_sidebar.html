@@ -19,14 +19,14 @@
                 {% endif %}
                 {% if persona.perfil == 2 %}
                     <li>
-                        <a href="{% url 'sistema' 'cursos' %}"><i class="fa-solid fa-layer-group"></i> <span>Cursos</span> </a>
+                        <a href="{% url 'sistema' 'cursosdocente' %}"><i class="fa-solid fa-book-open-reader"></i> <span>Asignaturas</span> </a>
                     </li>
                     <li>
                         <a href="{% url 'sistema' 'recursos' %}"><i class="fa-solid fa-file-lines"></i> <span>Recursos</span> </a>
                     </li>
 
                 {% endif %}
-              {% if persona.perfil == 2 %}
+              {% if persona.perfil == 3 %}
                     <li>
                         <a href="{% url 'sistema' 'cursos' %}"><i class="fa-solid fa-layer-group"></i> <span>Cursos</span> </a>
                     </li>

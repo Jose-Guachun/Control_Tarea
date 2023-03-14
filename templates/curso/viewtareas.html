@@ -4,7 +4,7 @@
 {% block content %}
 
     <div class="row ps-2">
-        <h1><a href="{% url 'sistema' 'cursos' %}" title="Atras" data-bs-toggle="tooltip"><i
+        <h1><a href="{% url 'sistema' 'cursosdocente' %}" title="Atras" data-bs-toggle="tooltip"><i
                 class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-list-check"></i> {{ title }}
             <span>| {{ curso_a }}</span></h1>
     </div>
@@ -73,7 +73,7 @@
                                 {% if list.archivo_qr %}
                                     <a target="_blank" title="Código QR" href="{{ list.archivo_qr.url }}"
                                        class="">
-                                        <img src="{{ list.archivo_qr.url }}" alt="Código QR" width="100" height="100">
+                                        <img src="{{ list.archivo_qr.url }}" alt="Código QR" width="50" height="50">
                                     </a>
                                 {% endif %}
                             </td>
