@@ -827,8 +827,9 @@ def cargarsistema(request, action):
         elif action == 'tareadetail':
             try:
                 data['title'] = 'Tarea'
-                listado =Task.objects.get(id=request.GET['id'])
-                return render(request, 'curso/viewtareasestudiante.html', data)
+                tarea =Task.objects.get(id=request.GET['id'])
+                data['tarea'] = tarea
+                return render(request, 'curso/viewtareadetail.html', data)
             except Exception as ex:
                 pass
         else:
