@@ -6,16 +6,36 @@
     <div class="row ps-2">
         <h1><a href="{% url 'sistema' 'tareasestudiante' %}" title="Atras" data-bs-toggle="tooltip"><i class="fa fa-arrow-circle-left nav-item"></i></a> <i class="fa-solid fa-paste"></i> {{ title }} | {{ tarea.asignatura.asignatura }}</h1>
     </div>
-    <div class="row p-2">
-        <div class="col-12">
-            <h1>{{ tarea }}</h1>
+    <div class="card">
+        <div class="card-header">
+            <h1 class="mb-0">{{ tarea }}</h1>
             <p>{{ tarea.description }}</p>
-            <p>{{ tarea.a }}</p>
-            {% for recurso in tarea.recursos %}
-
-            {% endfor %}
-            
         </div>
+    </div>
+    <div class="ms-2">
+    <h1>Recursos</h1>
+    <div class="row p-2">
+         {% for recurso in tarea.recursos.all %}
+            <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-header pb-1 h-100">
+                        <h2>{{ recurso }}</h2>
+                        <p>{{ recurso.descripcion|truncatechars:'70' }}</p>
+                    </div>
+                    <div class="card-body pt-1">
+                        <div class="row">
+                            <div class="col-6">
+                                <h2 class="my-0"><a href="{{ recurso.archivo.url }}" class="btn btn-success w-100 h100" target="_blank"><i class="fa fa-file-lines"></i> Documento</a></h2>
+                            </div>
+                              <div class="col-6">
+                                <h2 class="my-0"><a href="{{ recurso.enlace }}" class="btn btn-secondary w-100 h100" target="_blank"><i class="fa fa-link"></i> Enlace</a></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
     </div>
 
     {% include 'paginacion.html' %}
