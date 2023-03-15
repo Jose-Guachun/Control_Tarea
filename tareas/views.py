@@ -642,7 +642,7 @@ def cargarsistema(request, action):
                 filtro = filtro & Q(nombre__icontains=search)
                 url_vars += '&s=' + search
                 data['search'] = search
-            listado =Task.objects.filter(filtro).order_by('-id')
+            listado =Task.objects.filter(filtro, Q(asignatura_id=curso_a.id)).order_by('-id')
             paging = MiPaginador(listado, 20)
             p = 1
             try:

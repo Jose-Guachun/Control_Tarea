@@ -11,6 +11,15 @@
             <h1 class="mb-0">{{ tarea }}</h1>
             <p>{{ tarea.description }}</p>
         </div>
+        <div class="card-body pt-1">
+            <div class="row">
+                {% if tarea.archivo %}
+                    <div class="col-6">
+                        <h2 class="my-0"><a href="{{ tarea.archivo.url }}" class="btn btn-warning w-20 h100" target="_blank"><i class="fa fa-file-lines"></i> Documento</a></h2>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class="ms-2">
     <h1>Recursos</h1>
@@ -25,10 +34,14 @@
                     <div class="card-body pt-1">
                         <div class="row">
                             <div class="col-6">
-                                <h2 class="my-0"><a href="{{ recurso.archivo.url }}" class="btn btn-success w-100 h100" target="_blank"><i class="fa fa-file-lines"></i> Documento</a></h2>
+                                {% if recurso.archivo %}
+                                    <h2 class="my-0"><a href="{{ recurso.archivo.url }}" class="btn btn-success w-100 h100" target="_blank"><i class="fa fa-file-lines"></i> Documento</a></h2>
+                                {% endif %}
                             </div>
-                              <div class="col-6">
-                                <h2 class="my-0"><a href="{{ recurso.enlace }}" class="btn btn-secondary w-100 h100" target="_blank"><i class="fa fa-link"></i> Enlace</a></h2>
+                            <div class="col-6">
+                                {% if recurso.enlace %}
+                                    <h2 class="my-0"><a href="{{ recurso.enlace }}" class="btn btn-secondary w-100 h100" target="_blank"><i class="fa fa-link"></i> Enlace</a></h2>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
