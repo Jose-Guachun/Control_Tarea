@@ -333,7 +333,7 @@ def cargarsistema(request, action):
                         instance.recursos.add(recurso)
                     # Generar codigo QR
                     nombre_qr = 'qr' + str(instance.id) + '.png'
-                    carpeta_qr = 'ImageQR'
+                    carpeta_qr = 'Codigo_QR'
                     directorio = os.path.join(os.path.join(BASE_DIR, 'media', carpeta_qr))
                     ruta_qr = directorio + '\\' + nombre_qr
                     try:
