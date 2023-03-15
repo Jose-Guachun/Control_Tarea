@@ -125,10 +125,10 @@ def cargarsistema(request, action):
     else:
         DOMINIO_SISTEMA = None
     estudiantes_id=[]
-    # cursos=CursoAsignatura.objects.filter(status=True, cerrada=False)
-    # for curso in cursos:
-    #     for estudiante in curso.estudiantes.all():
-    #         estudiantes_id.append(estudiante.id)
+    cursos=Curso.objects.filter(status=True, cerrado=False)
+    for curso in cursos:
+        for estudiante in curso.estudiantes.all():
+            estudiantes_id.append(estudiante.id)
     if request.method == 'POST':
         action = request.POST.get('action',action)
         if action == 'addpersona':
@@ -186,7 +186,7 @@ def cargarsistema(request, action):
             try:
                 form = CursoForm(request.POST)
                 # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
-                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude( id__in=estudiantes_id)
                 if form.is_valid():
                     instance = Curso(nombre=form.cleaned_data['nombre'],
                                    paralelo=form.cleaned_data['paralelo'],
@@ -204,7 +204,7 @@ def cargarsistema(request, action):
             except Exception as ex:
                 form = CursoForm(request.POST)
                 # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
-                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude(id__in=estudiantes_id)
                 transaction.set_rollback(True)
                 messages.error(request, str(ex))
                 return render(request, 'curso/modal/formcurso.html',
@@ -216,7 +216,9 @@ def cargarsistema(request, action):
                 curso_a=Curso.objects.get(id=id)
                 form = CursoForm(request.POST, instance=curso_a)
                 # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
-                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                for estudiante in curso_a.estudiantes.all():
+                    estudiantes_id.remove(estudiante.id)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude(id__in=estudiantes_id)
                 if form.is_valid():
                     curso_a.nombre=form.cleaned_data['nombre']
                     curso_a.paralelo=form.cleaned_data['paralelo']
@@ -235,8 +237,9 @@ def cargarsistema(request, action):
                 data['form'] = form = CursoForm(request.POST)
                 data['id'] = request.POST['id']
                 data['curso_a'] = curso_a = Curso.objects.get(id=request.POST['id'])
-                # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
-                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                for estudiante in curso_a.estudiantes.all():
+                    estudiantes_id.remove(estudiante.id)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude(id__in=estudiantes_id)
                 transaction.set_rollback(True)
                 messages.error(request, str(ex))
                 return render(request, 'curso/modal/formcurso.html',data)
@@ -548,7 +551,7 @@ def cargarsistema(request, action):
                 # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
                 form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude(id__in=estudiantes_id)
                 data['form'] = form
-                template = "curso/modal/formasignatura.html"
+                template = "curso/modal/formcurso.html"
                 return render(request, template, data)
             except Exception as ex:
                 pass
@@ -558,9 +561,11 @@ def cargarsistema(request, action):
                 data['title'] = u'Adicionar Curso'
                 id=request.GET["id"]
                 data['curso_a']= curso_a =Curso.objects.get(id=id)
+                for estudiante in curso_a.estudiantes.all():
+                    estudiantes_id.remove(estudiante.id)
                 form = CursoForm(initial=model_to_dict(curso_a))
                 # form.fields['profesor'].queryset = Persona.objects.filter(status=True, perfil=2)
-                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1)
+                form.fields['estudiantes'].queryset = Persona.objects.filter(status=True, perfil=1).exclude(id__in=estudiantes_id)
                 data['form'] = form
                 template = "curso/modal/formcurso.html"
                 return render(request, template, data)
