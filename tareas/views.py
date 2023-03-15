@@ -84,6 +84,7 @@ def home(request):
                                            apellido1=form.cleaned_data['apellido1'],
                                            apellido2=form.cleaned_data['apellido2'],
                                            cedula=form.cleaned_data['cedula'],
+                                           correo=form.cleaned_data['correo'],
                                            genero=form.cleaned_data['genero'],
                                            perfil=form.cleaned_data['perfil'],
                                            fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
@@ -140,6 +141,7 @@ def cargarsistema(request, action):
                                            apellido1=form.cleaned_data['apellido1'],
                                            apellido2=form.cleaned_data['apellido2'],
                                            cedula=form.cleaned_data['cedula'],
+                                           correo=form.cleaned_data['correo'],
                                            genero=form.cleaned_data['genero'],
                                            perfil=form.cleaned_data['perfil'],
                                            fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
@@ -159,6 +161,7 @@ def cargarsistema(request, action):
                         instance.apellido1=form.cleaned_data['apellido1']
                         instance.apellido2=form.cleaned_data['apellido2']
                         instance.cedula=form.cleaned_data['cedula']
+                        instance.correo=form.cleaned_data['correo']
                         instance.genero=form.cleaned_data['genero']
                         instance.perfil=form.cleaned_data['perfil']
                         instance.fecha_nacimiento=form.cleaned_data['fecha_nacimiento']

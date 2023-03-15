@@ -31,6 +31,7 @@ class Persona(ModeloBase):
     telefono = models.CharField(max_length=20, validators=[validators.MinLengthValidator(10), SoloNumeros], verbose_name=u'Número de telefono')
     direccion = models.CharField(max_length=100, verbose_name=u'Dirección de domicilio')
     ciudad = models.CharField(max_length=100, verbose_name=u'Ciudad')
+    correo = models.CharField(max_length=200, verbose_name=u'Correo electronico', default='')
 
     picture = models.ImageField(
         upload_to='Fotos', verbose_name=u'Foto',
