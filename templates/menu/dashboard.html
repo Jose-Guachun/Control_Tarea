@@ -1,12 +1,27 @@
-{% extends "base.html" %}
+{% extends "base_sidebar.html" %}
 {% load static %}
 {% block title %}Dashboard{% endblock %}
+{% block scriptjs %}
+    <script>
+        var datos = '{{ datos|safe }}';
+        var opciones = {
+          chart: {
+            type: 'area'
+          },
+          series: [{
+            name: 'Código QR',
+            data: [{'x': 'Enero', 'y': '1'}]
+          },],
+          xaxis: {
+            type: 'datetime'
+          }
+        }
+        var grafico = new ApexCharts(document.querySelector("#grafica_acceso"), opciones);
+        grafico.render();
+    </script>
+{% endblock %}
 {% block content%}
-
-    <div class="page-wrapper">
-        <div class="content container-fluid">
-
-          <div class="row">
+      <div class="row">
             <div class="col-xl-3 col-sm-6 col-12 d-flex">
                 <div class="card bg-comman w-100">
                     <div class="card-body">
@@ -40,19 +55,19 @@
             
         </div>
 
-        <div class="row">
+    <div class="row">
             <div class="col-md-12 col-lg-6">
 
                 <div class="card card-chart">
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <h5 class="card-title">Descargas</h5>
+                                <h5 class="card-title">Acceso al sistema</h5>
                             </div>
                             <div class="col-6">
                                 <ul class="chart-list-out">
-                                    <li><span class="circle-blue"></span>Tareas</li>
-                                    <li><span class="circle-green"></span>Recursos</li>
+                                    <li><span class="circle-blue"></span>Código QR</li>
+                                    <li><span class="circle-green"></span>Sistema</li>
                                     <li class="star-menus"><a href="javascript:;"><i
                                                 class="fas fa-ellipsis-v"></i></a></li>
                                 </ul>
@@ -60,7 +75,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="apexcharts-area"></div>
+                        <div id="grafica_acceso"></div>
                     </div>
                 </div>
 
@@ -90,8 +105,5 @@
 
             </div>
         </div>
-          
-       
-    </div>
-</div>
+
 {% endblock %}

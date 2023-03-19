@@ -18,6 +18,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
 from django.contrib import messages
 
+from .mail import send_email
 from .models import *
 from .forms import TaskForm
 from Tarea.funciones import MiPaginador, generar_nombre
@@ -121,7 +122,7 @@ def cargarsistema(request, action):
     usuario = request.user
     persona = Persona.objects.filter(user=usuario)
     if DEBUG:
-        DOMINIO_SISTEMA = 'http://localhost:8000/'
+        DOMINIO_SISTEMA = 'http://localhost:8000'
     else:
         DOMINIO_SISTEMA = None
     estudiantes_id=[]
@@ -346,7 +347,7 @@ def cargarsistema(request, action):
                     if os.path.isfile(ruta_qr):
                         os.remove(ruta_qr)
                     version = datetime.now().strftime('%Y%m%d_%H%M%S%f')
-                    qr_url = pyqrcode.create(f'{DOMINIO_SISTEMA}media/{carpeta_qr}/{nombre_qr}?v={version}')
+                    qr_url = pyqrcode.create(f'{DOMINIO_SISTEMA}/s/tareadetail/?id={instance.id}&qr=1')
                     qr_png = qr_url.png(ruta_qr, 16, '#000000')
                     instance.archivo_qr = f'{carpeta_qr}/{nombre_qr}'
                     instance.save(request)
@@ -760,38 +761,42 @@ def cargarsistema(request, action):
 
         elif action == 'tareasestudiante':
             try:
-                data['title'] = 'Tareas Asignadas'
-                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, asignatura__curso__estudiantes=persona), f''
-                if search:
-                    filtro = filtro & Q(nombre__icontains=search)
-                    url_vars += '&s=' + search
-                    data['search'] = search
-                data['cursos']=CursoAsignatura.objects.filter(status=True, curso__estudiantes=persona).order_by('-id')
-                listado =Task.objects.filter(filtro).order_by('-id')
-                paging = MiPaginador(listado, 10)
-                p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
+                if persona.perfil == 1:
+                    data['title'] = 'Tareas Asignadas'
+                    search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, asignatura__curso__estudiantes=persona), f''
+                    if search:
+                        filtro = filtro & Q(nombre__icontains=search)
+                        url_vars += '&s=' + search
+                        data['search'] = search
+                    data['cursos']=CursoAsignatura.objects.filter(status=True, curso__estudiantes=persona).order_by('-id')
+                    listado =Task.objects.filter(filtro).order_by('-id')
+                    paging = MiPaginador(listado, 10)
+                    p = 1
                     try:
+                        paginasesion = 1
+                        if 'paginador' in request.session:
+                            paginasesion = int(request.session['paginador'])
+                        if 'page' in request.GET:
+                            p = int(request.GET['page'])
+                        else:
+                            p = paginasesion
+                        try:
+                            page = paging.page(p)
+                        except:
+                            p = 1
                         page = paging.page(p)
                     except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['rangospaging'] = paging.rangos_paginado(p)
-                data['page'] = page
-                data["url_vars"] = url_vars
-                data['listado'] = page.object_list
-                return render(request, 'curso/viewtareasestudiante.html', data)
+                        page = paging.page(p)
+                    request.session['paginador'] = p
+                    data['paging'] = paging
+                    data['rangospaging'] = paging.rangos_paginado(p)
+                    data['page'] = page
+                    data["url_vars"] = url_vars
+                    data['listado'] = page.object_list
+                    return render(request, 'curso/viewtareasestudiante.html', data)
+                else:
+                    messages.error(request, 'Usted no tiene acceso a este apartado.')
+                    return redirect('home')
             except Exception as ex:
                 pass
 
@@ -834,10 +839,49 @@ def cargarsistema(request, action):
 
         elif action == 'tareadetail':
             try:
-                data['title'] = 'Tarea'
-                tarea =Task.objects.get(id=request.GET['id'])
-                data['tarea'] = tarea
-                return render(request, 'curso/viewtareadetail.html', data)
+                if persona.perfil==1:
+                    data['title'] = 'Tarea'
+                    tarea =Task.objects.get(id=request.GET['id'])
+                    data['tarea'] = tarea
+                    if not tarea.existe_acceso(persona.id):
+                        if 'qr' in request.GET:
+                            estadistica=AccesoTarea(estudiante=persona, tarea_id=tarea.id, tipoacceso=1)
+                            estadistica.save(request)
+                        else:
+                            estadistica = AccesoTarea(estudiante=persona, tarea_id=tarea.id, tipoacceso=2)
+                            estadistica.save(request)
+                    return render(request, 'curso/viewtareadetail.html', data)
+                else:
+                    messages.error(request,'Usted no tiene acceso a este apartado.')
+                    return redirect('home')
+            except Exception as ex:
+                pass
+
+        elif action == 'notificartarea':
+            try:
+                tarea=Task.objects.get(id=request.GET['id'])
+                url= DOMINIO_SISTEMA+tarea.archivo_qr.url
+                for persona in tarea.asignatura.curso.estudiantes.all():
+                    send_email(persona, url, tarea)
+                url = reverse('sistema', kwargs={'action': 'tareas'}) + '?' + urlencode({'id': tarea.asignatura.id})
+                return redirect(url)
+            except Exception as ex:
+                pass
+
+        elif action == 'estadistica':
+            try:
+                data['title'] = 'Estadísticas de acceso'
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
+                if search:
+                    filtro = filtro & Q(nombre__icontains=search)
+                    url_vars += '&s=' + search
+                    data['search'] = search
+                listado = AccesoTarea.objects.filter(filtro).order_by('-id')
+                datos = []
+                for acceso in listado:
+                    datos.append({'x': acceso.fecha_creacion.date(), 'y': 1})
+                data['datos']=datos
+                return render(request, 'menu/dashboard.html', data)
             except Exception as ex:
                 pass
         else:

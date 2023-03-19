@@ -11,6 +11,10 @@ SEXO = (
     (1, 'Masculino'),
     (2, 'Femenino'),
 )
+TIPO_ACCESO= (
+    (1, 'Código QR'),
+    (2, 'Sistema'),
+)
 PERFIL_USUARIO = (
     (0, '----------'),
     (1, 'Estudiante'),
@@ -120,5 +124,16 @@ class Task(ModeloBase):
     # codigo_qr = models.FileField(upload_to='Codigo_QR', blank=True, null=True, verbose_name=u'Código QR')
     archivo = models.FileField(upload_to='Archivo_Doc', blank=True, null=True, verbose_name=u'Documento de tarea')
 
+    def existe_acceso(self, id):
+        return self.accesotarea_set.filter(status=True, estudiante_id=id)
+
     def __str__(self):
         return f'{self.title}'
+
+class AccesoTarea(ModeloBase):
+    estudiante=models.ForeignKey(Persona, on_delete=models.CASCADE, blank=True, null=True,verbose_name=u'Estudiante que accede')
+    tarea = models.ForeignKey(Task, on_delete=models.CASCADE, blank=True, null=True,verbose_name=u'Tarea')
+    tipoacceso = models.IntegerField(choices=TIPO_ACCESO, default=0, verbose_name=u'Genero')
+
+    def __str__(self):
+        return f'{self.tarea}'
