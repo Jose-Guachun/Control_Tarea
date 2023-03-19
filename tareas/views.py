@@ -64,6 +64,9 @@ class LoginView(FormView):
         else:
             return super(LoginView, self).dispatch(request, *args, **kwargs)
 
+    def get_success_url(self):
+        return self.request.GET.get('next', reverse_lazy('home'))
+
     def form_valid(self, form):
         login(self.request, form.get_user())
         return super(LoginView, self).form_valid(form)
