@@ -46,6 +46,17 @@ class Persona(ModeloBase):
         # return username
         return (f'{self.nombres} {self.apellido1} {self.apellido2}')
 
+    def t_estudiantes(self):
+        asignaturas=self.cursoasignatura_set.filter(status=True)
+        datos={}
+        t_estudiantes=0
+        for asignatura in asignaturas:
+            curso=asignatura.curso.nombre
+            if not curso in datos:
+                datos[curso]=total=len(asignatura.curso.estudiantes.all())
+                t_estudiantes+=total
+        return t_estudiantes
+
     def nombre_simple(self):
         nombres = self.nombres.split(' ')
         return (f'{nombres[0]} {self.apellido1}')
@@ -60,6 +71,9 @@ class Curso(ModeloBase):
 
     def __str__(self):
         return u'%s' % self.nombre
+
+    def curso_docente(self,id):
+        return self.cursoasignatura_set.filter(status=True, profesor_id=id).exists()
 
     class Meta:
         verbose_name = u"Curso"
@@ -126,6 +140,9 @@ class Task(ModeloBase):
 
     def existe_acceso(self, id):
         return self.accesotarea_set.filter(status=True, estudiante_id=id)
+
+    def total_acceso(self, tipo):
+        return len(self.accesotarea_set.filter(status=True, tipoacceso=tipo))
 
     def __str__(self):
         return f'{self.title}'

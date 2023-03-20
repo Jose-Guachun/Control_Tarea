@@ -57,6 +57,23 @@
                     </div>
                 </a>
             </div> <!-- end card-->
+             <div class="col-md-3">
+            <a href="{% url 'sistema' 'estadistica' %}">
+                <div class="card" style="border:1px solid #CCC">
+                    <div class="card-header bg-light" style="height:40px">
+                        <span class="text-dark">Dashboard</span>
+                    </div>
+                    <div class="text-center card-title">
+                        <h1 class="mt-1 text-dark"><i class="bi bi-bar-chart-line text-black"></i></h1>
+                    </div>
+                </div> <!-- end card-body-->
+                <div class="card-footer" style="height:40px">
+                    <p class="mb-0 text-muted text-bold">
+                        <em class="text-nowrap">Visualización de datos</em>
+                    </p>
+                </div>
+            </a>
+        </div> <!-- end card-->
         {% endif %}
         {% if persona.perfil == 3 %}
             <div class="col-md-3">
@@ -76,25 +93,6 @@
                     </div>
                 </a>
             </div> <!-- end card-->
-        {% endif %}
-        {% if not persona.perfil == 1 %}
-        <div class="col-md-3">
-            <a href="{% url 'sistema' 'estadistica' %}">
-                <div class="card" style="border:1px solid #CCC">
-                    <div class="card-header bg-light" style="height:40px">
-                        <span class="text-dark">Dashboard</span>
-                    </div>
-                    <div class="text-center card-title">
-                        <h1 class="mt-1 text-dark"><i class="bi bi-bar-chart-line text-black"></i></h1>
-                    </div>
-                </div> <!-- end card-body-->
-                <div class="card-footer" style="height:40px">
-                    <p class="mb-0 text-muted text-bold">
-                        <em class="text-nowrap">Visualización de datos</em>
-                    </p>
-                </div>
-            </a>
-        </div> <!-- end card-->
         {% endif %}
         
     </div>

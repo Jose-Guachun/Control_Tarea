@@ -83,21 +83,21 @@
                                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-cogs"></i> <i class="fa fa-angle-down"></i>
                                     </button>
-                                    <ul class="dropdown-menu pull-left fs-3" x-placement="right-start">
+                                    <ul class="dropdown-menu pull-left fs-3" >
                                         {% if list.archivo_qr %}
                                             <li>
                                                 <a href="{% url 'sistema' 'notificartarea' %}?id={{ list.id }}"
-                                                   class="dropdown-item"><span class="fa fa-envelope"></span> Notificar estudiantes</a>
+                                                   class="dropdown-item"><i class="fa fa-envelope"></i> Notificar estudiantes</a>
                                             </li>
                                         {% endif %}
                                         <li>
                                             <a href="{% url 'sistema' 'edittarea' %}?id={{ list.id }}&idp={{ curso_a.id }}"
-                                               class="dropdown-item"><span class="fa fa-edit"></span> Editar</a>
+                                               class="dropdown-item"><i class="fa fa-edit"></i> Editar</a>
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);"
-                                               onclick="eliminarajax('{{ list.id }}', '{{ list }}','deltarea')"
-                                               class="dropdown-item"><span class="fa fa-trash"></span> Eliminar</a>
+                                               onclick="eliminarajax('{{ list.id }}', `{{ list }}`,'deltarea')"
+                                               class="dropdown-item"><i class="fa fa-trash"></i> Eliminar</a>
                                         </li>
                                     </ul>
                                 </div>

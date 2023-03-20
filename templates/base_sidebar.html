@@ -24,24 +24,17 @@
                     <li>
                         <a href="{% url 'sistema' 'recursos' %}"><i class="fa-solid fa-file-lines"></i> <span>Recursos</span> </a>
                     </li>
+                     <li>
+                        <a href="{% url 'sistema' 'estadistica' %}"><i class="zmdi zmdi-view-dashboard"></i> <span>
+                                Dashboard</span></a>
 
+                    </li>
                 {% endif %}
               {% if persona.perfil == 3 %}
                     <li>
                         <a href="{% url 'sistema' 'cursos' %}"><i class="fa-solid fa-layer-group"></i> <span>Cursos</span> </a>
                     </li>
                 {% endif %}
-                {% if not persona.perfil == 1 %}
-                    <li>
-                        <a href="{% url 'sistema' 'estadistica' %}"><i class="zmdi zmdi-view-dashboard"></i> <span>
-                                Dashboard</span></a>
-
-                    </li>
-                {% endif %}
-
-
-
-               
             </ul>
         </div>
     </div>

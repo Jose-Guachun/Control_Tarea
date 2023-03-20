@@ -805,38 +805,42 @@ def cargarsistema(request, action):
 
         elif action == 'cursosdocente':
             try:
-                data['title'] = 'Asignaturas'
-                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True,profesor_id=persona.id), ''
-                if search:
-                    filtro = filtro & Q(nombre__icontains=search)
-                    url_vars += '&s=' + search
-                    data['search'] = search
-                listado = CursoAsignatura.objects.filter(filtro).order_by('-id')
-                paging = MiPaginador(listado, 20)
-                p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
+                if persona.perfil==2:
+                    data['title'] = 'Asignaturas'
+                    search, filtro, url_vars = request.GET.get('s', ''), Q(status=True,profesor_id=persona.id), ''
+                    if search:
+                        filtro = filtro & Q(nombre__icontains=search)
+                        url_vars += '&s=' + search
+                        data['search'] = search
+                    listado = CursoAsignatura.objects.filter(filtro).order_by('-id')
+                    paging = MiPaginador(listado, 20)
+                    p = 1
                     try:
+                        paginasesion = 1
+                        if 'paginador' in request.session:
+                            paginasesion = int(request.session['paginador'])
+                        if 'page' in request.GET:
+                            p = int(request.GET['page'])
+                        else:
+                            p = paginasesion
+                        try:
+                            page = paging.page(p)
+                        except:
+                            p = 1
                         page = paging.page(p)
                     except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['rangospaging'] = paging.rangos_paginado(p)
-                data['page'] = page
-                data["url_vars"] = url_vars
-                data['listado'] = page.object_list
-                data['totcount'] = listado.count()
-                return render(request, 'curso/viewcursodocente.html', data)
+                        page = paging.page(p)
+                    request.session['paginador'] = p
+                    data['paging'] = paging
+                    data['rangospaging'] = paging.rangos_paginado(p)
+                    data['page'] = page
+                    data["url_vars"] = url_vars
+                    data['listado'] = page.object_list
+                    data['totcount'] = listado.count()
+                    return render(request, 'curso/viewcursodocente.html', data)
+                else:
+                    messages.error(request, 'Usted no tiene acceso a este apartado.')
+                    return redirect('home')
             except Exception as ex:
                 pass
 
@@ -873,18 +877,45 @@ def cargarsistema(request, action):
 
         elif action == 'estadistica':
             try:
-                data['title'] = 'Estadísticas de acceso'
-                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
-                if search:
-                    filtro = filtro & Q(nombre__icontains=search)
-                    url_vars += '&s=' + search
-                    data['search'] = search
-                listado = AccesoTarea.objects.filter(filtro).order_by('-id')
-                datos = []
-                for acceso in listado:
-                    datos.append({'x': acceso.fecha_creacion.date(), 'y': 1})
-                data['datos']=datos
-                return render(request, 'menu/dashboard.html', data)
+                if persona.perfil==2:
+                    # acceso = AccesoTarea.objects.filter(status=True, tarea__asignatura__profesor_id=persona.id).order_by('-id')
+                    t_estudiantes = persona.t_estudiantes()
+                    tareas=Task.objects.filter(status=True, asignatura__profesor_id=persona.id)
+                    t_tareas= len(tareas)
+                    label_tarea = []
+                    chart_data = []
+                    chart_data2 = []
+                    for tarea in tareas:
+                        label_tarea.append(tarea.title)
+                        chart_data.append(tarea.total_acceso(1))
+                        chart_data2.append(tarea.total_acceso(2))
+                    datos={
+                        'labels':label_tarea,
+                        'values_qr':chart_data,
+                        'values_sistema':chart_data2,
+                    }
+                    label_curso = []
+                    m_data = []
+                    f_data = []
+                    cursos=Curso.objects.filter(status=True)
+                    for curso in cursos:
+                        if curso.curso_docente(persona.id):
+                            label_curso.append(f'{curso.nombre}')
+                            m_data.append(len(curso.estudiantes.filter(genero=1)))
+                            f_data.append(len(curso.estudiantes.filter(genero=2)))
+                    datos2 = {
+                        'labels': label_curso,
+                        'values_m': m_data,
+                        'values_f': f_data,
+                    }
+                    data['datos']=datos
+                    data['datos2']=datos2
+                    data['t_tareas']=t_tareas
+                    data['t_estudiantes']=t_estudiantes
+                    return render(request, 'menu/dashboard.html', data)
+                else:
+                    messages.error(request, 'Usted no tiene acceso a este apartado.')
+                    return redirect('home')
             except Exception as ex:
                 pass
         else:
