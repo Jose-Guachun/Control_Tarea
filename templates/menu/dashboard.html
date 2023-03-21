@@ -40,6 +40,10 @@
     </script>
 {% endblock %}
 {% block content%}
+    <div class="card-header text-center">
+        <h1>Dashboard</h1>
+    </div>
+    <br>
       <div class="row">
             <div class="col-xl-3 col-sm-6 col-12 d-flex">
                 <div class="card bg-comman w-100">
@@ -74,51 +78,47 @@
             
         </div>
 
-    <div class="row">
-            <div class="col-md-12 col-lg-6">
-
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <h5 class="card-title">Acceso a tareas</h5>
-                            </div>
-                            <div class="col-6">
-                                <ul class="chart-list-out">
-                                    <li><span class="circle-blue"></span>Código QR</li>
-                                    <li><span class="circle-green"></span>Sistema</li>
-                                </ul>
-                            </div>
+    <div class="row text-center">
+        <div class="col-md-12 col-lg-6">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <div class="row align-items">
+                        <div class="col-8 text-left">
+                            <h5 class="card-title">Acceso a tareas</h5>
+                        </div>
+                        <div class="col-4">
+                            <ul class="chart-list-out">
+                                <li><span class="circle-blue"></span>Código QR</li>
+                                <li><span class="circle-green"></span>Sistema</li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div id="grafica_acceso"></div>
-                    </div>
                 </div>
-
-            </div>
-            <div class="col-md-12 col-lg-6">
-
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <h5 class="card-title">Número de estudiantes según cursos</h5>
-                            </div>
-                            <div class="col-6">
-                                <ul class="chart-list-out">
-                                    <li><span class="circle-blue"></span>Mujeres</li>
-                                    <li><span class="circle-green"></span>Hombres</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="bar-student"></div>
-                    </div>
+                <div class="card-body">
+                    <div id="grafica_acceso"></div>
                 </div>
-
             </div>
         </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <div class="row align-items-center ">
+                        <div class="col-11 text-left">
+                            <h5 class="card-title">Número de estudiantes según cursos</h5>
+                        </div>
+                        <div class="col-1">
+                            <ul class="chart-list-out">
+                                <li><span class="circle-blue"></span>Mujeres</li>
+                                <li><span class="circle-green"></span>Hombres</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="bar-student"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
