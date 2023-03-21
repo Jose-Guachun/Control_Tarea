@@ -25,7 +25,7 @@ from Tarea.funciones import MiPaginador, generar_nombre
 from Tarea.settings import DEBUG, BASE_DIR
 import pyqrcode
 from datetime import datetime
-
+import requests
 
 def signup(request):
     if request.method == 'GET':
@@ -355,6 +355,21 @@ def cargarsistema(request, action):
                     instance.archivo_qr = f'{carpeta_qr}/{nombre_qr}'
                     instance.save(request)
                     # Generar codigo QR
+
+                    # Cargar la imagen
+                    ruta_imagen = instance.archivo_qr.path
+                    url_api = 'https://api.imgur.com/3/image'
+                    client_id = 'f6beb7e7279bebd'
+                    client_secret = '4349beb494ca4aea21766d54bb7b98facb4aa5c0'
+                    with open(ruta_imagen, 'rb') as archivo1:
+                        files = {'image': archivo1}
+                        headers = {'Authorization': f'Client-ID {client_id}'}
+                        respuesta = requests.post(url_api, files=files, headers=headers)
+
+                    # Obtener la URL pública del archivo
+                    url_publica = respuesta.json().get('data').get('link')
+                    instance.enlace_qr=url_publica
+                    instance.save(request)
                     # Se construye la URL de la nueva vista con los parámetros
                     url = reverse('sistema', kwargs={'action': 'tareas'}) + '?' + urlencode({'id': idp})
                     # Se redirige al usuario a la nueva URL
