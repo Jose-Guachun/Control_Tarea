@@ -15,6 +15,10 @@ TIPO_ACCESO= (
     (1, 'Código QR'),
     (2, 'Sistema'),
 )
+TIPO_ARCHIVO= (
+    (1, 'Tarea'),
+    (2, 'Recurso'),
+)
 PERFIL_USUARIO = (
     (0, '----------'),
     (1, 'Estudiante'),
@@ -142,8 +146,14 @@ class Task(ModeloBase):
     def existe_acceso(self, id):
         return self.accesotarea_set.filter(status=True, estudiante_id=id)
 
+    def existe_descarga(self, id, tipo):
+        return self.descargaarchivo_set.filter(status=True, estudiante_id=id, tipoarchivo=tipo)
+
     def total_acceso(self, tipo):
         return len(self.accesotarea_set.filter(status=True, tipoacceso=tipo))
+
+    def total_descarga(self,tipo):
+        return len(self.descargaarchivo_set.filter(status=True, tipoarchivo=tipo))
 
     def __str__(self):
         return f'{self.title}'
@@ -152,6 +162,14 @@ class AccesoTarea(ModeloBase):
     estudiante=models.ForeignKey(Persona, on_delete=models.CASCADE, blank=True, null=True,verbose_name=u'Estudiante que accede')
     tarea = models.ForeignKey(Task, on_delete=models.CASCADE, blank=True, null=True,verbose_name=u'Tarea')
     tipoacceso = models.IntegerField(choices=TIPO_ACCESO, default=0, verbose_name=u'Genero')
+
+    def __str__(self):
+        return f'{self.tarea}'
+
+class DescargaArchivo(ModeloBase):
+    estudiante=models.ForeignKey(Persona, on_delete=models.CASCADE, blank=True, null=True,verbose_name=u'Estudiante que accede')
+    tarea = models.ForeignKey(Task, on_delete=models.CASCADE, blank=True, null=True,verbose_name=u'Tarea')
+    tipoarchivo = models.IntegerField(choices=TIPO_ARCHIVO, default=0, verbose_name=u'Tipo archivo')
 
     def __str__(self):
         return f'{self.tarea}'

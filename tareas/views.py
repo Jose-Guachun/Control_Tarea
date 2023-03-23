@@ -900,14 +900,20 @@ def cargarsistema(request, action):
                     label_tarea = []
                     chart_data = []
                     chart_data2 = []
+                    chart_descarga_tarea= []
+                    chart_descarga_recurso= []
                     for tarea in tareas:
                         label_tarea.append(tarea.title)
                         chart_data.append(tarea.total_acceso(1))
                         chart_data2.append(tarea.total_acceso(2))
+                        chart_descarga_tarea.append(tarea.total_descarga(1))
+                        chart_descarga_recurso.append(tarea.total_descarga(2))
                     datos={
                         'labels':label_tarea,
                         'values_qr':chart_data,
                         'values_sistema':chart_data2,
+                        'values_tareas':chart_descarga_tarea,
+                        'values_recursos':chart_descarga_recurso,
                     }
                     label_curso = []
                     m_data = []
@@ -928,6 +934,27 @@ def cargarsistema(request, action):
                     data['t_tareas']=t_tareas
                     data['t_estudiantes']=t_estudiantes
                     return render(request, 'menu/dashboard.html', data)
+                else:
+                    messages.error(request, 'Usted no tiene acceso a este apartado.')
+                    return redirect('home')
+            except Exception as ex:
+                pass
+
+        elif action == 'descargararchivo':
+            try:
+                if persona.perfil==1:
+                    tipo=int(request.GET.get('tipo',1))
+                    tarea = Task.objects.get(id=request.GET['id'])
+                    if not tarea.existe_descarga(persona.id,tipo):
+                        descarga = DescargaArchivo(estudiante=persona, tarea_id=tarea.id, tipoarchivo=tipo)
+                        descarga.save(request)
+                    if tipo == 1:
+                        url_pdf = f'{DOMINIO_SISTEMA}{tarea.archivo.url}'
+                    if tipo == 2:
+                        idrecurso = request.GET['idr']
+                        recurso=Recurso.objects.get(id=idrecurso)
+                        url_pdf = f'{DOMINIO_SISTEMA}{recurso.archivo.url}'
+                    return HttpResponseRedirect(url_pdf)
                 else:
                     messages.error(request, 'Usted no tiene acceso a este apartado.')
                     return redirect('home')

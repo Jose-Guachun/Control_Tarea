@@ -37,6 +37,24 @@
         }
         var grafico2 = new ApexCharts(document.querySelector("#bar-student"), opciones2);
         grafico2.render();
+
+        var opciones3 = {
+          chart: {
+            type: 'bar'
+          },
+          series: [{
+            name: 'Tareas',
+            data: {{ datos.values_tareas|safe }}
+          },{
+            name: 'Recursos',
+            data: {{  datos.values_recursos|safe }}
+          },],
+          xaxis: {
+             categories: {{ datos.labels|safe }}
+          }
+        }
+        var grafico3 = new ApexCharts(document.querySelector("#grafica_descarga"), opciones3);
+        grafico3.render();
     </script>
 {% endblock %}
 {% block content%}
@@ -96,6 +114,49 @@
                 </div>
                 <div class="card-body">
                     <div id="grafica_acceso"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <div class="row align-items-center ">
+                        <div class="col-11 text-left">
+                            <h5 class="card-title">Número de estudiantes según cursos</h5>
+                        </div>
+                        <div class="col-1">
+                            <ul class="chart-list-out">
+                                <li><span class="circle-blue"></span>Mujeres</li>
+                                <li><span class="circle-green"></span>Hombres</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="bar-student"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center">
+        <div class="col-md-12 col-lg-6">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <div class="row align-items">
+                        <div class="col-8 text-left">
+                            <h5 class="card-title">Descarga de tareas y recursos</h5>
+                        </div>
+                        <div class="col-4">
+                            <ul class="chart-list-out">
+                                <li><span class="circle-blue"></span>Tareas</li>
+                                <li><span class="circle-green"></span>Recursos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="grafica_descarga"></div>
                 </div>
             </div>
         </div>
