@@ -76,32 +76,38 @@ class LoginView(FormView):
 def home(request):
     data={}
     usuario = request.user
+    data['persona'] = persona = Persona.objects.filter(user=usuario)
     if request.method == 'POST':
         action = request.POST['action']
         if action == 'addpersona':
             try:
                 form = PersonaForm(request.POST)
+                form.fields['perfil'].queryset = PERFIL_USUARIO[:3]
                 if form.is_valid():
                     if not Persona.objects.filter(user=request.user).exists():
-                        instance = Persona(nombres=form.cleaned_data['nombres'],
-                                           user=request.user,
-                                           apellido1=form.cleaned_data['apellido1'],
-                                           apellido2=form.cleaned_data['apellido2'],
-                                           cedula=form.cleaned_data['cedula'],
-                                           correo=form.cleaned_data['correo'],
-                                           genero=form.cleaned_data['genero'],
-                                           perfil=form.cleaned_data['perfil'],
-                                           fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
-                                           telefono=form.cleaned_data['telefono'],
-                                           direccion=form.cleaned_data['direccion'],
-                                           ciudad=form.cleaned_data['ciudad'],
-                                           )
-                        instance.save(request)
-                        if 'picture' in request.FILES:
-                            newfile = request.FILES['picture']
-                            newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
-                            instance.picture = newfile
-                        instance.save(request)
+                        cedula = form.cleaned_data['cedula']
+                        if not Persona.objects.filter(cedula=cedula).exists():
+                            instance = Persona(nombres=form.cleaned_data['nombres'],
+                                               user=request.user,
+                                               apellido1=form.cleaned_data['apellido1'],
+                                               apellido2=form.cleaned_data['apellido2'],
+                                               cedula= cedula,
+                                               correo=form.cleaned_data['correo'],
+                                               genero=form.cleaned_data['genero'],
+                                               perfil=form.cleaned_data['perfil'],
+                                               fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
+                                               telefono=form.cleaned_data['telefono'],
+                                               direccion=form.cleaned_data['direccion'],
+                                               ciudad=form.cleaned_data['ciudad'],
+                                               )
+                            instance.save(request)
+                            if 'picture' in request.FILES:
+                                newfile = request.FILES['picture']
+                                newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
+                                instance.picture = newfile
+                            instance.save(request)
+                        else:
+                            raise NameError(u'Ya existe un registro con ésta cédula.')
                     return redirect('home')
                 else:
                     return render(request, 'actualizarperfil.html', {"form": form})
@@ -111,19 +117,21 @@ def home(request):
                               {"error": "Error: {}".format(str(ex)), "form": PersonaForm(request.POST)})
     else:
         if not Persona.objects.filter(user=usuario).exists():
-            data['form']=PersonaForm()
+            data['form']= form = PersonaForm()
+            form.fields['perfil'].queryset = PERFIL_USUARIO[:3]
             template = 'actualizarperfil.html'
         else:
             data['persona'] = Persona.objects.get(user=usuario)
             template = 'home.html'
         return render(request, template, data)
 
+
 @login_required
 @transaction.atomic()
 def cargarsistema(request, action):
     data = {}
     usuario = request.user
-    persona = Persona.objects.filter(user=usuario)
+    data['persona'] = persona = Persona.objects.filter(user=usuario)
     if DEBUG:
         DOMINIO_SISTEMA = 'http://localhost:8000'
     else:
@@ -140,44 +148,52 @@ def cargarsistema(request, action):
                 form = PersonaForm(request.POST)
                 if form.is_valid():
                     if not Persona.objects.filter(user=request.user).exists():
-                        instance = Persona(nombres=form.cleaned_data['nombres'],
-                                           user=request.user,
-                                           apellido1=form.cleaned_data['apellido1'],
-                                           apellido2=form.cleaned_data['apellido2'],
-                                           cedula=form.cleaned_data['cedula'],
-                                           correo=form.cleaned_data['correo'],
-                                           genero=form.cleaned_data['genero'],
-                                           perfil=form.cleaned_data['perfil'],
-                                           fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
-                                           telefono=form.cleaned_data['telefono'],
-                                           direccion=form.cleaned_data['direccion'],
-                                           ciudad=form.cleaned_data['ciudad'],
-                                           )
-                        instance.save(request)
-                        if 'picture' in request.FILES:
-                            newfile = request.FILES['picture']
-                            newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
-                            instance.picture = newfile
-                        instance.save(request)
+                        cedula = form.cleaned_data['cedula']
+                        if not Persona.objects.filter(cedula=cedula).exists():
+                            instance = Persona(nombres=form.cleaned_data['nombres'],
+                                               user=request.user,
+                                               apellido1=form.cleaned_data['apellido1'],
+                                               apellido2=form.cleaned_data['apellido2'],
+                                               cedula=cedula,
+                                               correo=form.cleaned_data['correo'],
+                                               genero=form.cleaned_data['genero'],
+                                               perfil=form.cleaned_data['perfil'],
+                                               fecha_nacimiento=form.cleaned_data['fecha_nacimiento'],
+                                               telefono=form.cleaned_data['telefono'],
+                                               direccion=form.cleaned_data['direccion'],
+                                               ciudad=form.cleaned_data['ciudad'],
+                                               )
+                            instance.save(request)
+                            if 'picture' in request.FILES:
+                                newfile = request.FILES['picture']
+                                newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
+                                instance.picture = newfile
+                            instance.save(request)
+                        else:
+                            raise NameError(u'Ya existe un registro con ésta cédula.')
                     else:
                         instance = Persona.objects.get(user=request.user)
-                        instance.nombres=form.cleaned_data['nombres']
-                        instance.apellido1=form.cleaned_data['apellido1']
-                        instance.apellido2=form.cleaned_data['apellido2']
-                        instance.cedula=form.cleaned_data['cedula']
-                        instance.correo=form.cleaned_data['correo']
-                        instance.genero=form.cleaned_data['genero']
-                        instance.perfil=form.cleaned_data['perfil']
-                        instance.fecha_nacimiento=form.cleaned_data['fecha_nacimiento']
-                        instance.telefono=form.cleaned_data['telefono']
-                        instance.direccion=form.cleaned_data['direccion']
-                        instance.ciudad=form.cleaned_data['ciudad']
-                        instance.save(request)
-                        if 'picture' in request.FILES:
-                            newfile = request.FILES['picture']
-                            newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
-                            instance.picture = newfile
-                        instance.save(request)
+                        cedula = form.cleaned_data['cedula']
+                        if not Persona.objects.filter(cedula=cedula).exclude(id=instance.id).exists():
+                            instance.nombres=form.cleaned_data['nombres']
+                            instance.apellido1=form.cleaned_data['apellido1']
+                            instance.apellido2=form.cleaned_data['apellido2']
+                            instance.cedula=form.cleaned_data['cedula']
+                            instance.correo=form.cleaned_data['correo']
+                            instance.genero=form.cleaned_data['genero']
+                            instance.perfil=form.cleaned_data['perfil']
+                            instance.fecha_nacimiento=form.cleaned_data['fecha_nacimiento']
+                            instance.telefono=form.cleaned_data['telefono']
+                            instance.direccion=form.cleaned_data['direccion']
+                            instance.ciudad=form.cleaned_data['ciudad']
+                            instance.save(request)
+                            if 'picture' in request.FILES:
+                                newfile = request.FILES['picture']
+                                newfile._name = generar_nombre(f'{request.user.username}', newfile._name)
+                                instance.picture = newfile
+                            instance.save(request)
+                        else:
+                            raise NameError(u'Ya existe un registro con ésta cédula.')
                     return redirect('home')
                 else:
                     return render(request, 'actualizarperfil.html', {"form": form})
@@ -235,7 +251,6 @@ def cargarsistema(request, action):
                 else:
                     return render(request, 'curso/modal/formcurso.html',
                                   {"form": form,'id':request.POST['id'],'curso_a':curso_a, "errors": [{v[0]} for k, v in form.errors.items()]})
-
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
                 data['form'] = form = CursoForm(request.POST)
@@ -350,7 +365,8 @@ def cargarsistema(request, action):
                     if os.path.isfile(ruta_qr):
                         os.remove(ruta_qr)
                     version = datetime.now().strftime('%Y%m%d_%H%M%S%f')
-                    qr_url = pyqrcode.create(f'{DOMINIO_SISTEMA}/s/tareadetail/?id={instance.id}&qr=1')
+                    data['url_escanearqr'] = url_escanearqr = f'{DOMINIO_SISTEMA}/s/tareadetail/?id={instance.id}&qr=1'
+                    qr_url = pyqrcode.create(url_escanearqr)
                     qr_png = qr_url.png(ruta_qr, 16, '#000000')
                     instance.archivo_qr = f'{carpeta_qr}/{nombre_qr}'
                     instance.save(request)
@@ -438,15 +454,28 @@ def cargarsistema(request, action):
                     archivo = None
                     if request.FILES:
                         archivo = request.FILES['archivo']
-                    if Recurso.objects.filter(status=True, enlace=enlace).exists():
-                        messages.error(request, f'Enlace de recurso ya existe.')
-                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
-                    if Recurso.objects.filter(status=True, archivo=archivo).exists():
-                        messages.error(request, f'Archivo de recurso ya existe.')
-                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
-                    if not enlace and not archivo:
-                        messages.error(request, f'Debe ingresar enlace o el archivo del recurso.')
-                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    # if not archivo:
+                    #     # raise NameError(u'Seleccione el archivo.')
+                    #     messages.error(request, u'Seleccione el archivo.')
+                    #     return render(request, 'recurso/modal/formrecurso.html',
+                    #                   {"form": form, "errors": [{v[0]} for k, v in form.errors.items()]})
+                    # titulo = form.cleaned_data['titulo']
+                    # if Recurso.objects.filter(status=True, titulo=titulo).exists():
+                    #     messages.error(request, f'Título de recurso ya existe.')
+                    #     return render(request, 'recurso/modal/formrecurso.html',
+                    #               {"form": form, "errors": [{v[0]} for k, v in form.errors.items()]})
+                    # if Recurso.objects.filter(status=True, enlace=enlace).exists():
+                    #     messages.error(request, f'Enlace de recurso ya existe.')
+                    #     return render(request, 'recurso/modal/formrecurso.html',
+                    #               {"form": form, "errors": [{v[0]} for k, v in form.errors.items()]})
+                    # if Recurso.objects.filter(status=True, archivo=archivo).exists():
+                    #     messages.error(request, f'Archivo de recurso ya existe.')
+                    #     return render(request, 'recurso/modal/formrecurso.html',
+                    #                   {"form": form, "errors": [{v[0]} for k, v in form.errors.items()]})
+                        # return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    # if not enlace and not archivo:
+                    #     messages.error(request, f'Debe ingresar enlace o el archivo del recurso.')
+                        # return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
                     instance = Recurso(titulo=form.cleaned_data['titulo'],
                                                descripcion=form.cleaned_data['descripcion'],
                                                enlace=enlace,
@@ -455,15 +484,21 @@ def cargarsistema(request, action):
                     instance.save(request)
                     # for estuidante in form.cleaned_data['estudiantes']:
                     #     instance.estudiantes.add(estuidante)
+
                     return redirect(reverse_lazy('sistema', kwargs={'action':'recursos'}))
                 else:
-                    messages.error(request, [v[0]for k, v in form.errors.items()])
-                    return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    # messages.error(request, [v[0]for k, v in form.errors.items()])
+                    return render(request, 'recurso/modal/formrecurso.html',
+                                  {"form": form, "errors": [{v[0]} for k, v in form.errors.items()]})
+                    # return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
                 transaction.set_rollback(True)
-                messages.error(request, '')
-                return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                # messages.error(request, '')
+                # return render(request, 'recurso/modal/formrecurso.html', {"form": form, "errors": [{v[0]} for k, v in form.errors.items()]})
+                messages.error(request, str(ex))
+                data['persona'] = persona = Persona.objects.filter(user=usuario)
+                return render(request, 'recurso/modal/formrecurso.html', {"form": form, 'persona': persona})
 
         if action == 'editrecurso':
             try:
@@ -471,11 +506,11 @@ def cargarsistema(request, action):
                 recurso=Recurso.objects.get(id=id)
                 form = RecursoForm(request.POST, instance=recurso)
                 if form.is_valid():
-                    if Recurso.objects.filter(status=True, enlace=form.cleaned_data['enlace']).exclude(id=id).exists():
-                        messages.error(request, f'Enlace de recurso ya existe.')
-                        return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
-                    if Recurso.objects.filter(status=True, archivo=form.cleaned_data['archivo']).exclude(id=id).exists():
-                        messages.error(request, f'Archivo de recurso ya existe.')
+                    # if Recurso.objects.filter(status=True, enlace=form.cleaned_data['enlace']).exclude(id=id).exists():
+                    #     messages.error(request, f'Enlace de recurso ya existe.')
+                    #     return redirect(reverse_lazy('sistema', kwargs={'action': 'addrecurso'}))
+                    # if Recurso.objects.filter(status=True, archivo=form.cleaned_data['archivo']).exclude(id=id).exists():
+                    #     messages.error(request, f'Archivo de recurso ya existe.')
                     recurso.titulo=form.cleaned_data['titulo']
                     recurso.descripcion=form.cleaned_data['descripcion']
                     recurso.enlace=form.cleaned_data['enlace']
@@ -490,7 +525,9 @@ def cargarsistema(request, action):
                     # return render(request, 'curso/modal/formcurso.html',{"form": CursoAsignaturaForm(request.POST),  "errors": [{k: v[0]} for k, v in form.errors.items()]})
             except Exception as ex:
                 transaction.set_rollback(True)
-                messages.error(request, 'Error. Por favor intentelo mas tarde')
+                messages.error(request, str(ex))
+                # return render(request, 'recurso/modal/formrecurso.html', {"form": form, 'persona': persona})
+                # messages.error(request, 'Error. Por favor intentelo mas tarde')
                 return redirect(reverse_lazy('sistema', kwargs={'action': 'recursos'}))
 
         if action == 'delrecurso':
@@ -509,7 +546,9 @@ def cargarsistema(request, action):
     else:
         if not persona:
             template = 'actualizarperfil.html'
-            return render(request, template, {"form": PersonaForm()})
+            form = PersonaForm()
+            form.fields['perfil'].queryset = PERFIL_USUARIO[:3]
+            return render(request, template, {"form": form})
             # if 'action' in request.GET:
             # data['action'] = action = request.GET['action']
         data['persona'] = persona = Persona.objects.get(user=usuario)
@@ -517,49 +556,55 @@ def cargarsistema(request, action):
 
         if action=='addpersona':
             if not Persona.objects.filter(user=usuario).exists():
-                data['form'] = PersonaForm()
+                data['form'] = form = PersonaForm()
+                form.fields['perfil'].queryset = PERFIL_USUARIO[:3]
                 template = 'actualizarperfil.html'
             else:
                 data['persona'] = persona=Persona.objects.get(user=usuario)
-                data['form'] = PersonaForm(initial=model_to_dict(persona))
+                data['form'] = form = PersonaForm(initial=model_to_dict(persona))
+                perfil = form.fields['perfil'].queryset = PERFIL_USUARIO[:3]
                 template = 'actualizarperfil.html'
             return render(request, template, data)
 
         elif action == 'cursos':
             try:
-                data['title'] = 'Cursos'
-                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
-                if search:
-                    filtro = filtro & Q(nombre__icontains=search)
-                    url_vars += '&s=' + search
-                    data['search'] = search
-                listado = Curso.objects.filter(filtro).order_by('-id')
-                paging = MiPaginador(listado, 20)
-                p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
+                if persona.perfil == 3:
+                    data['title'] = 'Cursos'
+                    search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
+                    if search:
+                        filtro = filtro & Q(nombre__icontains=search)
+                        url_vars += '&s=' + search
+                        data['search'] = search
+                    listado = Curso.objects.filter(filtro).order_by('-id')
+                    paging = MiPaginador(listado, 20)
+                    p = 1
                     try:
+                        paginasesion = 1
+                        if 'paginador' in request.session:
+                            paginasesion = int(request.session['paginador'])
+                        if 'page' in request.GET:
+                            p = int(request.GET['page'])
+                        else:
+                            p = paginasesion
+                        try:
+                            page = paging.page(p)
+                        except:
+                            p = 1
                         page = paging.page(p)
                     except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['rangospaging'] = paging.rangos_paginado(p)
-                data['page'] = page
-                data["url_vars"] = url_vars
-                data['listado'] = page.object_list
-                data['totcount'] = listado.count()
-                request.session['viewactivo'] = 1
-                return render(request, 'curso/viewcurso.html', data)
+                        page = paging.page(p)
+                    request.session['paginador'] = p
+                    data['paging'] = paging
+                    data['rangospaging'] = paging.rangos_paginado(p)
+                    data['page'] = page
+                    data["url_vars"] = url_vars
+                    data['listado'] = page.object_list
+                    data['totcount'] = listado.count()
+                    request.session['viewactivo'] = 1
+                    return render(request, 'curso/viewcurso.html', data)
+                else:
+                    messages.error(request, 'Usted no tiene acceso a este apartado.')
+                    return redirect('home')
             except Exception as ex:
                 pass
 
@@ -593,41 +638,45 @@ def cargarsistema(request, action):
 
         elif action == 'asignaturas':
             try:
-                id=request.GET['id']
-                data['curso']=Curso.objects.get(id=id)
-                data['title'] = 'Asignaturas'
-                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, curso_id=id), ''
-                if search:
-                    filtro = filtro & Q(nombre__icontains=search)
-                    url_vars += '&s=' + search
-                    data['search'] = search
-                listado = CursoAsignatura.objects.filter(filtro).order_by('-id')
-                paging = MiPaginador(listado, 20)
-                p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
+                if persona.perfil == 3:
+                    id=request.GET['id']
+                    data['curso']=Curso.objects.get(id=id)
+                    data['title'] = 'Asignaturas'
+                    search, filtro, url_vars = request.GET.get('s', ''), Q(status=True, curso_id=id), ''
+                    if search:
+                        filtro = filtro & Q(nombre__icontains=search)
+                        url_vars += '&s=' + search
+                        data['search'] = search
+                    listado = CursoAsignatura.objects.filter(filtro).order_by('-id')
+                    paging = MiPaginador(listado, 20)
+                    p = 1
                     try:
+                        paginasesion = 1
+                        if 'paginador' in request.session:
+                            paginasesion = int(request.session['paginador'])
+                        if 'page' in request.GET:
+                            p = int(request.GET['page'])
+                        else:
+                            p = paginasesion
+                        try:
+                            page = paging.page(p)
+                        except:
+                            p = 1
                         page = paging.page(p)
                     except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['rangospaging'] = paging.rangos_paginado(p)
-                data['page'] = page
-                data["url_vars"] = url_vars
-                data['listado'] = page.object_list
-                data['totcount'] = listado.count()
-                request.session['viewactivo'] = 1
-                return render(request, 'curso/view.html', data)
+                        page = paging.page(p)
+                    request.session['paginador'] = p
+                    data['paging'] = paging
+                    data['rangospaging'] = paging.rangos_paginado(p)
+                    data['page'] = page
+                    data["url_vars"] = url_vars
+                    data['listado'] = page.object_list
+                    data['totcount'] = listado.count()
+                    request.session['viewactivo'] = 1
+                    return render(request, 'curso/view.html', data)
+                else:
+                    messages.error(request, 'Usted no tiene acceso a este apartado.')
+                    return redirect('home')
             except Exception as ex:
                 pass
 
@@ -659,38 +708,43 @@ def cargarsistema(request, action):
                 pass
 
         elif action == 'tareas':
-            data['title'] = 'Tareas'
-            data['curso_a']=curso_a=CursoAsignatura.objects.get(id=request.GET['id'])
-            search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), f'&id={curso_a.id}'
-            if search:
-                filtro = filtro & Q(nombre__icontains=search)
-                url_vars += '&s=' + search
-                data['search'] = search
-            listado =Task.objects.filter(filtro, Q(asignatura_id=curso_a.id)).order_by('-id')
-            paging = MiPaginador(listado, 20)
-            p = 1
-            try:
-                paginasesion = 1
-                if 'paginador' in request.session:
-                    paginasesion = int(request.session['paginador'])
-                if 'page' in request.GET:
-                    p = int(request.GET['page'])
-                else:
-                    p = paginasesion
+            # Validar acceso al módulo
+            if persona.perfil == 2:
+                data['title'] = 'Tareas'
+                data['curso_a']=curso_a=CursoAsignatura.objects.get(id=request.GET['id'])
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), f'&id={curso_a.id}'
+                if search:
+                    filtro = filtro & Q(nombre__icontains=search)
+                    url_vars += '&s=' + search
+                    data['search'] = search
+                listado =Task.objects.filter(filtro, Q(asignatura_id=curso_a.id)).order_by('-id')
+                paging = MiPaginador(listado, 20)
+                p = 1
                 try:
+                    paginasesion = 1
+                    if 'paginador' in request.session:
+                        paginasesion = int(request.session['paginador'])
+                    if 'page' in request.GET:
+                        p = int(request.GET['page'])
+                    else:
+                        p = paginasesion
+                    try:
+                        page = paging.page(p)
+                    except:
+                        p = 1
                     page = paging.page(p)
                 except:
-                    p = 1
-                page = paging.page(p)
-            except:
-                page = paging.page(p)
-            request.session['paginador'] = p
-            data['paging'] = paging
-            data['rangospaging'] = paging.rangos_paginado(p)
-            data['page'] = page
-            data["url_vars"] = url_vars
-            data['listado'] = page.object_list
-            return render(request, 'curso/viewtareas.html', data)
+                    page = paging.page(p)
+                request.session['paginador'] = p
+                data['paging'] = paging
+                data['rangospaging'] = paging.rangos_paginado(p)
+                data['page'] = page
+                data["url_vars"] = url_vars
+                data['listado'] = page.object_list
+                return render(request, 'curso/viewtareas.html', data)
+            else:
+                messages.error(request, 'Usted no tiene acceso a este apartado.')
+                return redirect('home')
 
         elif action == 'addtarea':
             try:
@@ -717,39 +771,43 @@ def cargarsistema(request, action):
                 pass
         # Recursos
         if action == 'recursos':
-            data['title'] = 'Recursos'
-            search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
-            if search:
-                filtro = filtro & Q(titulo__icontains=search)
-                url_vars += '&s=' + search
-                data['search'] = search
-            listado = Recurso.objects.filter(filtro).order_by('-id')
-            paging = MiPaginador(listado, 20)
-            p = 1
-            try:
-                paginasesion = 1
-                if 'paginador' in request.session:
-                    paginasesion = int(request.session['paginador'])
-                if 'page' in request.GET:
-                    p = int(request.GET['page'])
-                else:
-                    p = paginasesion
+            if persona.perfil == 2:
+                data['title'] = 'Recursos'
+                search, filtro, url_vars = request.GET.get('s', ''), Q(status=True), ''
+                if search:
+                    filtro = filtro & Q(titulo__icontains=search)
+                    url_vars += '&s=' + search
+                    data['search'] = search
+                listado = Recurso.objects.filter(filtro).order_by('-id')
+                paging = MiPaginador(listado, 20)
+                p = 1
                 try:
+                    paginasesion = 1
+                    if 'paginador' in request.session:
+                        paginasesion = int(request.session['paginador'])
+                    if 'page' in request.GET:
+                        p = int(request.GET['page'])
+                    else:
+                        p = paginasesion
+                    try:
+                        page = paging.page(p)
+                    except:
+                        p = 1
                     page = paging.page(p)
                 except:
-                    p = 1
-                page = paging.page(p)
-            except:
-                page = paging.page(p)
-            request.session['paginador'] = p
-            data['paging'] = paging
-            data['rangospaging'] = paging.rangos_paginado(p)
-            data['page'] = page
-            data["url_vars"] = url_vars
-            data['listado'] = page.object_list
-            data['totcount'] = listado.count()
-            request.session['viewactivo'] = 1
-            return render(request, 'recurso/view.html', data)
+                    page = paging.page(p)
+                request.session['paginador'] = p
+                data['paging'] = paging
+                data['rangospaging'] = paging.rangos_paginado(p)
+                data['page'] = page
+                data["url_vars"] = url_vars
+                data['listado'] = page.object_list
+                data['totcount'] = listado.count()
+                request.session['viewactivo'] = 1
+                return render(request, 'recurso/viewrecurso.html', data)
+            else:
+                messages.error(request, 'Usted no tiene acceso a este apartado.')
+                return redirect('home')
 
         elif action == 'addrecurso':
             try:
@@ -883,8 +941,9 @@ def cargarsistema(request, action):
             try:
                 tarea=Task.objects.get(id=request.GET['id'])
                 url= DOMINIO_SISTEMA+tarea.archivo_qr.url
+                lector_qr = f'{DOMINIO_SISTEMA}/s/tareadetail/?id={tarea.id}&qr=1'
                 for persona in tarea.asignatura.curso.estudiantes.all():
-                    send_email(persona, url, tarea)
+                    send_email(persona, url, tarea, lector_qr)
                 url = reverse('sistema', kwargs={'action': 'tareas'}) + '?' + urlencode({'id': tarea.asignatura.id})
                 return redirect(url)
             except Exception as ex:
@@ -960,6 +1019,7 @@ def cargarsistema(request, action):
                     return redirect('home')
             except Exception as ex:
                 pass
+
         else:
             template = 'home.html'
             return render(request, template, data)

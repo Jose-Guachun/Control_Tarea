@@ -72,8 +72,13 @@
                                                                 <strong style="line-height:inherit">Docente: </strong> {{ data.asignatura.profesor}}
                                                                 <br style="line-height:inherit">
                                                                 <strong style="line-height:inherit">Tarea: </strong> {{ data.title }}
-                                                                <br style="line-height:inherit">
+                                                                <br style="line-height:inherit"><br
+                                                                style="line-height:inherit">Accede a la tarea mediante el código QR:<br style="line-height:inherit">
                                                                 <br>
+                                                                <div class="" align="center">
+                                                                    <a href="{{ lector_qr }}" target="_blank"><img src="{{ data.enlace_qr }}" width="120" height="120"></a>
+                                                                </div>
+
                                                                 <br style="line-height:inherit">Recuerda que también puedes acceder a la tarea ingresando al Sistema Educativo.</span>
                                                     </p>
                                                 </div>
@@ -96,7 +101,7 @@
                                             style="line-height:inherit;border-top:0px solid transparent;border-left:0px solid transparent;border-bottom:0px solid transparent;border-right:0px solid transparent;padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px">
                                             <div align="center"
                                                 style="line-height:inherit;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px">
-                                                <a href="{{ qr_url }}" target="_blank"><img src="{{ data.enlace_qr }}" width="100" height="100"></a>
+{#                                                <a href='https://postimg.cc/cKTLrFqP' target='_blank'><img src='https://i.postimg.cc/cKTLrFqP/00065-3829068532-close-portrait-of-jguachuns-stylish-person-in-custom-made-robot-suit-futuristic-st.png' border='0' alt='00065-3829068532-close-portrait-of-jguachuns-stylish-person-in-custom-made-robot-suit-futuristic-st'/></a>#}
                                             </div>
                                         </div>
                                     </div>

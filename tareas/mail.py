@@ -5,8 +5,8 @@ from django.conf import settings
 from django.shortcuts import render
 from django.template.loader import render_to_string
 
-def send_email(persona, qr_url,data):
-    context={'persona': persona, 'qr_url': qr_url,'data':data}
+def send_email(persona, qr_url,data, lector_qr):
+    context={'persona': persona, 'qr_url': qr_url,'data':data, 'lector_qr': lector_qr}
 
     # template=get_template('correo.html')
     # content=template.render(context)

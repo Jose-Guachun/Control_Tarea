@@ -126,7 +126,7 @@ class Recurso(ModeloBase):
     titulo = models.CharField(max_length=200)
     descripcion = models.CharField(default='', max_length=5000, verbose_name=u'Descripción')
     enlace = models.CharField(default='', max_length=5000, verbose_name=u'Enlace')
-    archivo = models.FileField(upload_to='Recursos', blank=True, null=True, verbose_name=u'Archivo')
+    archivo = models.FileField(upload_to='Recursos', blank=True, null=True ,verbose_name=u'Archivo')
 
     def __str__(self):
         return self.titulo

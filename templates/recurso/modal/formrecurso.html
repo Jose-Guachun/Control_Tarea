@@ -3,7 +3,7 @@
 {% block title %}INICIO{% endblock %}
 {% block content%}
 <div class="card">
-    <div class='card-body border-top border-3 rounded-3 border-primary'>
+    <div class='card-body border-top rounded-3'>
         <h2> <i class="fa-solid fa-layer-group"></i> Adicionar Recurso</h2>
                 {% for error in errors %}
                     <p class="alert alert-danger">{{ error }}</p>
@@ -45,7 +45,7 @@
 {% block srcjs %}
 <script>
     $(function () {
-        $("#id_tipo").select2({ width: "100%" })
+        {#$("#id_recurso, #id_asignatura, #id_profesor, #id_estudiantes").select2({ width: "100%" })#}
     });
 </script>
 {% endblock %}
