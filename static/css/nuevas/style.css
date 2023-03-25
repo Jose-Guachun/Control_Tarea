@@ -1,6 +1,24 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
 
 
+.user-img .user-text .text-muted {
+    line-height: 1.2;
+    font-size: 12px;
+    font-weight: 500;
+    color: #f4f5fb!important;
+}
 
+.user-img .user-text h6 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 3px;
+}
+
+.header .header-left .logo img {
+    max-height: 100%;
+    width: 100%;
+    margin-top: 10px;
+}
 
 
