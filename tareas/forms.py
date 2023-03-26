@@ -64,7 +64,7 @@ class LoginForm(AuthenticationForm):
         return username
     
 class PersonaForm(Base):
-    
+    perfil = forms.ChoiceField(choices=PERFIL_USUARIO[:3])
     class Meta:
         model=Persona
         fields=[
@@ -83,7 +83,7 @@ class PersonaForm(Base):
             ]
         widgets = {
             'genero': forms.Select(attrs={'class': 'form-control'}),
-            'perfil': forms.Select(attrs={'class': 'form-control'}),
+            'perfil': forms.Select(attrs={'class': 'form-control'})
             }
 
 class CursoAsignaturaForm(Base):

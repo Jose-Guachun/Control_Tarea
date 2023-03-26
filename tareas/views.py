@@ -117,8 +117,8 @@ def home(request):
                               {"error": "Error: {}".format(str(ex)), "form": PersonaForm(request.POST)})
     else:
         if not Persona.objects.filter(user=usuario).exists():
-            data['form']= form = PersonaForm()
-            form.fields['perfil'].queryset = PERFIL_USUARIO[:3]
+            form = PersonaForm()
+            data['form'] =form
             template = 'actualizarperfil.html'
         else:
             data['persona'] = Persona.objects.get(user=usuario)
@@ -556,8 +556,8 @@ def cargarsistema(request, action):
 
         if action=='addpersona':
             if not Persona.objects.filter(user=usuario).exists():
-                data['form'] = form = PersonaForm()
-                form.fields['perfil'].queryset = PERFIL_USUARIO[:3]
+                form = PersonaForm()
+                data['form'] =form
                 template = 'actualizarperfil.html'
             else:
                 data['persona'] = persona=Persona.objects.get(user=usuario)
