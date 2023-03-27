@@ -223,14 +223,15 @@
 
             $(function () {
                 {% if messages %}
+                    {% for message in messages %}
                      Swal.fire(
-                         {% for message in messages %}
-                             '{{ message }}'
-                         {% endfor %},
+                         '{{ message }}',
                          '{{ nombreempresa }}',
-                         'error'
+                         {% if message.tags %}
+                             '{{ message.tags }}'
+                         {% endif %}
                      )
-
+                    {% endfor %}
                 {% endif %}
             })
             function mensajeSuccess(mensaje) {

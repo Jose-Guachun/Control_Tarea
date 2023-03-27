@@ -945,6 +945,7 @@ def cargarsistema(request, action):
                 for persona in tarea.asignatura.curso.estudiantes.all():
                     send_email(persona, url, tarea, lector_qr)
                 url = reverse('sistema', kwargs={'action': 'tareas'}) + '?' + urlencode({'id': tarea.asignatura.id})
+                messages.success(request, 'Correos enviados exitosamente')
                 return redirect(url)
             except Exception as ex:
                 pass
